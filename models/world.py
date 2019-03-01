@@ -10,6 +10,7 @@ from models.tiles.nokia_phonium_tile import NokiaPhonium
 from models.tiles.half_liter_klokkium_tile import HalfLiterKlokkium
 import random
 import bisect
+import collections
 
 
 # These values are from above
@@ -17,11 +18,11 @@ DIRT_START = 20
 STONE_START = 40
 RESOURCE_START = 50
 
-RESOURCE_CHANCE = 15
+RESOURCE_CHANCE = 0.15
 
 # ratio peaks when resource is most common
 resource_ratio_peaks = [None] * 5
-resource_ratio_peaks[0] = [Jeltisnium, 0.10]
+resource_ratio_peaks[0] = [Jeltisnium, 0.15]
 resource_ratio_peaks[1] = [Marxinium, 0.25]
 resource_ratio_peaks[2] = [Leninium, 0.35]
 resource_ratio_peaks[3] = [NokiaPhonium, 0.50]
@@ -71,6 +72,7 @@ class World(object):
                 elif y > RESOURCE_START:
                     if random.uniform(0, 1) < RESOURCE_CHANCE:
                         column.append(self.decide_resource(x, y, height))
+                        continue
                     stone_chance = y / height  # TODO: Sigmoid that shit
                     if random.uniform(0, 1) > stone_chance:
                         column.append(Dirt(self, x, y, False))
@@ -96,11 +98,10 @@ class World(object):
             normalized_chances[distance] = normalized_chance
         population = []
         weights = []
-        for resource_ratio_peak in resource_ratio_peaks:
-            population.append(resource_ratio_peak[0])
-            weights.append(resource_ratio_peak[1])
+        for normalized_chance in normalized_chances:
+            population.append(normalized_chance)
+            weights.append(normalized_chances[normalized_chance])
         result = self.choice(population, weights)
-        print(result)
         return result(self, x, y)
 
     def cdf(self, weights):
