@@ -14,6 +14,11 @@ STONE_START = 40
 class World(object):
 
     def __init__(self, width, height):
+        """
+
+        :param width: Width in tiles
+        :param height: Height in tiles
+        """
         self.tile_matrix = self.gen_world(width, height)
         self.width = width
         self.height = height
