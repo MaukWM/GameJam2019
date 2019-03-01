@@ -50,7 +50,6 @@ def update_state():
     o2 = (offset + 1 + object_width) % SCREEN_WIDTH
     offset = o1
     if o2 != (o1 + object_width):
-        print(o2-o1 - object_width)
         window.blit(msg_surface, (o2 - object_width, 0))
 
     window.blit(msg_surface, (offset, 0))
