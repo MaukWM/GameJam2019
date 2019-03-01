@@ -1,6 +1,6 @@
 from models.player import Player
 from models.world import World
-from constants import TILE_SIZE_IN_PIXELS
+from constants import TILE_SIZE_IN_PIXELS, SCREEN_HEIGHT
 
 
 class Game(object):
@@ -9,10 +9,10 @@ class Game(object):
 
         # Iets wat niet een blokje of player is is een entity:
         self.entities = []
-        self.player = Player(10, 20)
+        self.player = Player(self.world, 10, 20)
 
     def draw(self, surface):
-        camera_y = int(self.player.y/TILE_SIZE_IN_PIXELS)*TILE_SIZE_IN_PIXELS
+        camera_y = int((self.player.y + -SCREEN_HEIGHT//2)/TILE_SIZE_IN_PIXELS)*TILE_SIZE_IN_PIXELS
 
         self.world.draw(surface, camera_y)
         self.player.draw(surface, camera_y)
@@ -21,4 +21,4 @@ class Game(object):
 
     def step(self):
         # Do game logic n stuff
-        pass
+        self.player.step()

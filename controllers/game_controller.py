@@ -26,12 +26,16 @@ class GameController(object):
     def handle_key_held(self, event_key):
 
         # TODO: REMOVE THESE HACKS
-        if event_key == pygame.K_DOWN:
-            self.game.player.y += 60
+        if event_key == pygame.K_UP:
+            self.game.player.jump()
 
         # TODO: REMOVE THESE HACKS
-        if event_key == pygame.K_UP:
-            self.game.player.y -= 60
+        if event_key == pygame.K_LEFT:
+            self.game.player.x_speed = -2
+
+        # TODO: REMOVE THESE HACKS
+        if event_key == pygame.K_RIGHT:
+            self.game.player.x_speed = 2
 
     # Handle all pygame events
     def handle_events(self):

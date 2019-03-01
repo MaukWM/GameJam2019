@@ -3,6 +3,7 @@ import random
 from models.tiles.dirt_tile import Dirt
 from models.tiles.air_tile import Air
 from models.tiles.stone_tile import Stone
+from constants import TILE_SIZE_IN_PIXELS
 import random
 
 
@@ -50,7 +51,22 @@ class World(object):
                     continue
 
             world_matrix.append(column)
+
+        world_matrix[5][20] = Air(self, 5, 20)
+        world_matrix[6][20] = Air(self, 6, 20)
+        world_matrix[6][21] = Air(self, 6, 21)
         return world_matrix
+
+    def get_tile_at_indices(self, tile_x, tile_y):
+        if tile_x < 0 or tile_y < 0:
+            return None
+        try:
+            return self.tile_matrix[tile_x][tile_y]
+        except IndexError:
+            return None
+
+    def get_tile_at(self, x, y):
+        return self.get_tile_at_indices(x//TILE_SIZE_IN_PIXELS, y//TILE_SIZE_IN_PIXELS)
 
     def draw(self, surface, camera_y):
         for x in range(self.width):
