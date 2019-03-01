@@ -33,6 +33,9 @@ def handle_key_press(event_key):
 # Handle all pygame events
 def handle_events():
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN:
                 handle_key_press(event.key)
 
@@ -42,11 +45,12 @@ def update_state():
     global offset, window
     window.fill((0, 0, 0))
 
+    object_width = msg_surface.get_width()
     o1 = (offset + 1) % SCREEN_WIDTH
-    o2 = (offset + 1 + msg_surface.get_width()) % SCREEN_WIDTH
+    o2 = (offset + 1 + object_width) % SCREEN_WIDTH
     offset = o1
-    if o2 != (o1 + SCREEN_WIDTH):
-        window.blit(msg_surface, (o2, 0))
+    if o2 != (o1 + object_width):
+        window.blit(msg_surface, (o2 - object_width, 0))
 
     window.blit(msg_surface, (offset, 0))
 
