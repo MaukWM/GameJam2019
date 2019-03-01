@@ -1,3 +1,2 @@
-# GameJam2019Boilerplate
-Boilerplate code for our 2019 GameJam project
-### wel forken he??????!!!
+# GameJam 2019 woooh!
+Fantastic and nice.
