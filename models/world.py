@@ -1,10 +1,18 @@
 import random
 
 from models.tiles.dirt_tile import Dirt
+from models.tiles.air_tile import Air
 from models.tiles.stone_tile import Stone
+import random
+
+
+# These values are from above
+DIRT_START = 20
+STONE_START = 40
 
 
 class World(object):
+
     def __init__(self, width, height):
         self.tile_matrix = self.gen_world(width, height)
         self.width = width
@@ -15,10 +23,27 @@ class World(object):
         for x in range(width):
             column = []
             for y in range(height):
-                if random.random() > 0.9:
-                    column.append(Stone(self, x, y))
-                else:
-                    column.append(Dirt(self, x, y))
+                # Are we above where the ground starts?
+                if y < DIRT_START:
+                    column.append(Air(self, x, y))
+                    continue
+                # Are we where the ground start?
+                elif y == DIRT_START:
+                    column.append(Dirt(self, x, y, True))
+                    continue
+                # Are we below where the ground starts but above where the stone starts?
+                elif (y > DIRT_START) and (y <= STONE_START):
+                    column.append(Dirt(self, x, y, False))
+                    continue
+                # Are we below where the stone starts?
+                elif y > STONE_START:
+                    stone_chance = y/height
+                    if random.uniform(0, 1) > stone_chance:
+                        column.append(Dirt(self, x, y, False))
+                    else:
+                        column.append(Stone(self, x, y))
+                    continue
+
             world_matrix.append(column)
         return world_matrix
 
@@ -38,5 +63,5 @@ class World(object):
 
 
 if __name__ == "__main__":
-    world = World(64, 4096)
+    world = World(64, 1024)
     print(world)
