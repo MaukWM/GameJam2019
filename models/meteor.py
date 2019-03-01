@@ -2,6 +2,7 @@ from constants import FRAME_RATE
 import math
 import pygame
 
+
 class Meteor(object):
 
     METEOR_SPRITE = pygame.image.load('assets/graphics/meteor1.png')
