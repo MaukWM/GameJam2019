@@ -1,6 +1,8 @@
 from models.player import Player
 from models.world import World
-from constants import TILE_SIZE_IN_PIXELS
+from constants import TILE_SIZE_IN_PIXELS, SCREEN_WIDTH
+from models.meteor import Meteor
+import random
 
 
 class Game(object):
@@ -20,5 +22,13 @@ class Game(object):
             entity.draw(surface, camera_y)
 
     def step(self):
-        # Do game logic n stuff
-        pass
+        for entity in self.entities:
+            entity.step()
+            if type(entity) is Meteor:
+                # todo: collision detection
+                if entity.y > 1000:
+                    self.entities.remove(entity)
+
+        # time to maybe spawn a meteor
+        if random.randint(0, 1000) > 990:
+            self.entities.append(Meteor(random.randint(0, SCREEN_WIDTH), random.randint(50, 500) / 100))
