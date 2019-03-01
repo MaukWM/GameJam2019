@@ -85,6 +85,14 @@ class World(object):
 
     # hahaha lelijke functie dit eks dee ik wil dood
     def decide_resource(self, x, y, height):
+        """
+        Function used to decide which resource should be spawned in depending on how deep you are using
+        resource_ratio_peaks to decide when what has what chance
+        :param x: Only used for the return
+        :param y: how deep you are
+        :param height: the max height
+        :return: Random resource depending on depth
+        """
         distances = {}
         ratio_level = y / height
         for ratio_peak_list in resource_ratio_peaks:
