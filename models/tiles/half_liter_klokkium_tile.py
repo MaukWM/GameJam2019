@@ -1,0 +1,14 @@
+from models.tiles.tile import Tile
+from constants import TILE_SIZE_IN_PIXELS
+import pygame
+
+HALF_LITER_KLOKKIUM_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/halfliterklokkium.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
+
+class HalfLiterKlokkium(Tile):
+
+    def is_solid(self):
+        return True
+
+    def draw(self, surface, camera_y):
+        x, y = self.x * TILE_SIZE_IN_PIXELS, self.y * TILE_SIZE_IN_PIXELS - camera_y
+        surface.blit(HALF_LITER_KLOKKIUM_SPRITE, (x, y))

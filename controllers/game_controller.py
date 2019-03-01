@@ -8,7 +8,7 @@ from models.game import Game
 class GameController(object):
     def __init__(self, window):
         # setup stuff
-        self.game = Game(SCREEN_WIDTH//TILE_SIZE_IN_PIXELS, 128)
+        self.game = Game(SCREEN_WIDTH//TILE_SIZE_IN_PIXELS, 512)
         self.window = window
         self.held_keys = set()
 
