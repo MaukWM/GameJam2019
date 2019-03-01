@@ -2,8 +2,8 @@ from models.tiles.tile import Tile
 from constants import TILE_SIZE_IN_PIXELS
 import pygame
 
-DIRT_SPRITE = pygame.image.load('assets/graphics/dirt.png')
-DIRT_SPRITE_WITH_GRASS = pygame.image.load('assets/graphics/dirt_with_grass.png')
+DIRT_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/dirt.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
+DIRT_SPRITE_WITH_GRASS = pygame.transform.scale(pygame.image.load('assets/graphics/dirt_with_grass.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
 
 
 class Dirt(Tile):
