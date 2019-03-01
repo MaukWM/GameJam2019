@@ -166,3 +166,7 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+.idea/GameJam2019.iml
+.idea/inspectionProfiles/
+.idea/misc.xml
+.idea/modules.xml
