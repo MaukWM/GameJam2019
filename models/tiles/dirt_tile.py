@@ -3,6 +3,7 @@ from constants import TILE_SIZE_IN_PIXELS
 import pygame
 
 DIRT_SPRITE = pygame.image.load('assets/graphics/dirt.png')
+DIRT_SPRITE_WITH_GRASS = pygame.image.load('assets/graphics/dirt_with_grass.png')
 
 
 class Dirt(Tile):
@@ -15,7 +16,10 @@ class Dirt(Tile):
 
     def draw(self, surface, camera_y):
         x, y = self.x*TILE_SIZE_IN_PIXELS, self.y*TILE_SIZE_IN_PIXELS - camera_y
-        surface.blit(DIRT_SPRITE, (x, y))
+        if self.is_grass:
+            surface.blit(DIRT_SPRITE_WITH_GRASS, (x, y))
+        else:
+            surface.blit(DIRT_SPRITE, (x, y))
 
     def is_grass(self):
         return self.is_grass
