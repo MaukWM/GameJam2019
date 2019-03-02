@@ -25,4 +25,4 @@ class Dirt(Tile):
         return self.is_grass
 
     def get_strength(self):
-        return 0.1
+        return 0.4
