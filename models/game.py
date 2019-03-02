@@ -8,21 +8,28 @@ import models.world
 import models.tiles.air_tile
 from models.items.dropped_item import DroppedItem
 from models.items.item_types import ItemType
+from models.items.item_types import SCORES
+import pygame
 
 
 class Game(object):
 
     # todo: fix circular dependency and put in constants.py
     METEOR_SPAWN_RATE = 10
+    POINTS_PER_DEPTH = 1000
+    SCORE_TO_BE_ADDED_INCREMENTS_MINIMUM = 10
 
     def __init__(self, width, height, memes_enabled):
+        self.score: int = 0
+        self.score_to_be_added: int = 0
         self.world = World(width, height)
+        self.font = pygame.font.SysFont("Arial", 18)
 
         # Iets wat niet een blokje of player is is een entity:
         self.entities = []
         self.player = Player(self, 10, 20, memes_enabled)
         # Uncomment to test item drops :D
-        # self.entities.append(DroppedItem(self, ItemType.JELTSIUM, 400, 20))
+        self.entities.append(DroppedItem(self, ItemType.HALF_LITER_KLOKKIUM, 400, 20))
 
     def draw(self, surface):
 
@@ -39,7 +46,36 @@ class Game(object):
         for entity in self.entities:
             entity.draw(surface, camera_y)
 
+        msg_surface = self.font.render("Score: " + str(int(self.score)), True, (255, 255, 255))
+        surface.blit(msg_surface, ((SCREEN_WIDTH // 2) - (msg_surface.get_width() // 2), SCREEN_HEIGHT // 50))
+
+    def add_resource_score(self, entity: ItemType):
+        self.score_to_be_added += SCORES[entity]
+
+    def add_depth_score(self, difference):
+        """
+        Add points for each level the player went deeper
+        :param difference: The difference between the previously lowest reached level and the players current level
+        :return: Nada
+        """
+        self.score_to_be_added += 1000 * difference
+
     def step(self):
+        # Dynamically add score
+        if self.score_to_be_added > 0:
+            score_to_be_added_part = self.score_to_be_added // 100  # Divide amount of points to add by 100 and add that
+            if score_to_be_added_part < Game.SCORE_TO_BE_ADDED_INCREMENTS_MINIMUM:
+                if self.score_to_be_added < Game.SCORE_TO_BE_ADDED_INCREMENTS_MINIMUM:
+                    self.score += self.score_to_be_added
+                    self.score_to_be_added = 0
+                else:
+                    self.score += Game.SCORE_TO_BE_ADDED_INCREMENTS_MINIMUM
+                    self.score_to_be_added -= Game.SCORE_TO_BE_ADDED_INCREMENTS_MINIMUM
+            else:
+                self.score += score_to_be_added_part
+                self.score_to_be_added -= score_to_be_added_part
+        else:
+            self.score += 1
         for entity in self.entities:
             entity.step()
             if type(entity) is Meteor:
