@@ -1,5 +1,4 @@
 import math
-
 import pygame
 
 from constants import TILE_SIZE_IN_PIXELS, FRAME_RATE
@@ -7,6 +6,9 @@ from models.items.inventory import Inventory
 from constants import TILE_SIZE_IN_PIXELS, FRAME_RATE, SCREEN_HEIGHT
 from models.items.dropped_item import DroppedItem
 from models.items.dropped_item import DROPPED_ITEM_HEIGHT, DROPPED_ITEM_WIDTH
+from models.meteor import Meteor
+from models.explosion import Explosion
+from models.healthbar import HealthBar
 from models.world import DIRT_START
 
 PLAYER_WIDTH, PLAYER_HEIGHT = TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2
@@ -28,6 +30,7 @@ class Player(object):
         self.can_jump = True
         self.selected_tile = None
         self.inventory = Inventory(memes_enabled)
+        self.health_bar = HealthBar()
 
     def step(self):
 
@@ -88,24 +91,38 @@ class Player(object):
             self.highest_reached_y = new_tile_y
             self.game.add_depth_score(difference)
 
-        self.check_item_collisions()
+        self.check_entity_collisions()
 
         # Realistic friction ;P
         self.x_speed *= 0.8
 
-    def check_item_collisions(self):
+    def check_entity_collisions(self):
         for entity in self.game.entities:
-            if isinstance(entity, DroppedItem):
-                if (self.x - entity.x) < 4 and (self.y - entity.y) < 4:
-                    self.check_collision(entity)
+            if (self.x - entity.x) < 4 and (self.y - entity.y) < 4:
+                if isinstance(entity, DroppedItem) or isinstance(entity, Meteor):
+                    self.check_entity_collision(entity)
 
-    def check_collision(self, entity: DroppedItem):
+
+    def check_entity_collision(self, entity):
         player_box = (self.x, self.y, PLAYER_WIDTH, PLAYER_HEIGHT)
-        entity_box = (entity.x, entity.y, DROPPED_ITEM_WIDTH, DROPPED_ITEM_HEIGHT)
-        if self.check_overlap(player_box, entity_box):
-            self.consume_item(entity)
-            return True
-        return False
+        if isinstance(entity, DroppedItem):
+            entity_box = (entity.x, entity.y, DROPPED_ITEM_WIDTH, DROPPED_ITEM_HEIGHT)
+            if self.check_overlap(player_box, entity_box):
+                self.consume_item(entity)
+                return True
+            return False
+        elif isinstance(entity, Meteor):
+            entity_box = (entity.x, entity.y, entity.width, entity.height)
+            if self.check_overlap(player_box, entity_box):
+
+                # handle impact from meteor with player
+                self.game.entities.append(Explosion(entity.x, entity.y, entity.width))
+                self.health_bar.take_damage(entity.size * 30)
+                self.game.entities.remove(entity)
+                if self.health_bar.health <= 0:
+                    self.game.game_over = True
+                return True
+            return False
 
     @staticmethod
     def check_overlap(box1, box2):
@@ -123,6 +140,7 @@ class Player(object):
     def draw(self, surface, camera_y):
         surface.blit(PLAYER_SPRITE, (self.x, self.y - camera_y))
         self.inventory.draw(surface)
+        self.health_bar.draw(surface)
         if self.selected_tile is not None:
             rect = (
                 self.selected_tile.x * TILE_SIZE_IN_PIXELS,
