@@ -7,7 +7,11 @@ import random
 
 class Meteor(object):
 
-    METEOR_SPRITE = pygame.image.load('assets/graphics/meteor1.png')
+    sprites = [
+        pygame.image.load('assets/graphics/meteors/basestation.png'),
+        pygame.image.load('assets/graphics/meteors/stone1.png')
+    ]
+
 
     # the angle of the meteor in radians
     angle = 0.7
@@ -24,10 +28,11 @@ class Meteor(object):
         self.y = 0
         self.size = size
         self.angle = (random.randint(0, 14) - 7) / 10
+        self.SPRITE = self.sprites[random.randint(0, len(self.sprites) - 1)]
 
         # used for step calculations
-        self.delta_x = math.asin(self.angle) * self.speed
-        self.delta_y = math.acos(self.angle) * self.speed
+        self.delta_x = math.sin(self.angle) * self.speed
+        self.delta_y = math.cos(self.angle) * self.speed
 
     # update the internal state to the next state
     def step(self):
@@ -38,7 +43,7 @@ class Meteor(object):
     def draw(self, surface, cameray_y):
         to_draw_y = self.y - cameray_y
         to_draw_x= self.x
-        surface.blit(self.METEOR_SPRITE, (to_draw_x, to_draw_y))
+        surface.blit(self.SPRITE, (to_draw_x, to_draw_y))
 
     def is_colliding(self, DIRT_START, TILE_SIZE, game_tiles):
         try:
