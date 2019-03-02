@@ -1,6 +1,6 @@
 from models.player import Player
 from models.world import World
-from constants import TILE_SIZE_IN_PIXELS, SCREEN_WIDTH
+from constants import TILE_SIZE_IN_PIXELS, SCREEN_WIDTH, SCREEN_HEIGHT
 from models.meteor import Meteor, NotOnScreenError
 from models.explosion import Explosion
 import random
@@ -28,7 +28,7 @@ class Game(object):
         # camera_y = int((self.player.y + -SCREEN_HEIGHT//2)/TILE_SIZE_IN_PIXELS)*TILE_SIZE_IN_PIXELS
 
         # Uncomment this if you want the camera to follow the player without regard for the grid
-        camera_y = int(self.player.y + -SCREEN_HEIGHT // 2)
+        camera_y = int(self.player.y - SCREEN_HEIGHT // 2)
 
         self.world.draw(surface, camera_y)
         self.player.draw(surface, camera_y)
