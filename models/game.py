@@ -11,7 +11,7 @@ import models.tiles.air_tile
 class Game(object):
 
     # todo: fix circular dependency and put in constants.py
-    METEOR_SPAWN_RATE = 100
+    METEOR_SPAWN_RATE = 10
 
     def __init__(self, width, height):
         self.world = World(width, height)
