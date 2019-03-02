@@ -57,6 +57,7 @@ class GameController(object):
     # Do all updates to the game state in this function
     def update_state(self):
         self.game.step()
+        self.game.player.update_selected_tile(pygame.mouse.get_pos())
 
     def draw(self):
         self.game.draw(self.window)

@@ -42,6 +42,16 @@ class World(object):
         self.width = width
         self.height = height
 
+        # TODO: REMOVE
+        self.tile_matrix[5][20] = Air(self, 5, 20)
+        self.tile_matrix[5][21] = Air(self, 5, 21)
+        self.tile_matrix[5][22] = Air(self, 5, 22)
+        self.tile_matrix[5][23] = Air(self, 5, 23)
+        self.tile_matrix[6][20] = Air(self, 5, 20)
+        self.tile_matrix[6][21] = Air(self, 5, 21)
+        self.tile_matrix[6][22] = Air(self, 5, 22)
+        self.tile_matrix[6][23] = Air(self, 5, 23)
+
     def gen_world(self, width, height):
         """
         Generate the world with some beautiful generation code
@@ -100,7 +110,7 @@ class World(object):
         if tile_x < 0 or tile_y < 0:
             return None
         try:
-            return self.tile_matrix[tile_x][tile_y]
+            return self.tile_matrix[int(tile_x)][int(tile_y)]
         except IndexError:
             return None
 

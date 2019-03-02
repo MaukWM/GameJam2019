@@ -1,3 +1,5 @@
+import math
+
 import pygame
 
 from constants import TILE_SIZE_IN_PIXELS, FRAME_RATE, SCREEN_HEIGHT
@@ -14,6 +16,7 @@ class Player(object):
         self.x_speed = 0
         self.y_speed = 0
         self.can_jump = True
+        self.selected_tile = None
 
     def step(self):
 
@@ -71,6 +74,14 @@ class Player(object):
 
     def draw(self, surface, camera_y):
         surface.blit(PLAYER_SPRITE, (self.x, self.y - camera_y))
+        if self.selected_tile is not None:
+            rect = (
+                self.selected_tile.x * TILE_SIZE_IN_PIXELS,
+                self.selected_tile.y * TILE_SIZE_IN_PIXELS - camera_y,
+                TILE_SIZE_IN_PIXELS,
+                TILE_SIZE_IN_PIXELS,
+            )
+            pygame.draw.rect(surface, (255, 0, 0), rect, 3)
 
     def can_move_to_relative_tile_x(self, dx, x=None, y=None):
         """
@@ -135,7 +146,76 @@ class Player(object):
             self.can_jump = False
             self.y_speed -= 6.0
 
-    def mine(self, mouse_x, mouse_y):
+    def find_selected_tile(self, mouse_x, mouse_y, select_solids=True):
         dx = mouse_x - self.x
         dy = mouse_y - SCREEN_HEIGHT//2
 
+        distance_to_mouse = (dx**2 + dy**2)**0.5
+
+        dx_norm = dx/distance_to_mouse
+        dy_norm = dy/distance_to_mouse
+
+        dx_sign = 1 if dx_norm >= 0 else -1
+        dy_sign = 1 if dy_norm >= 0 else -1
+
+        dx_abs, dy_abs = dx_norm/dx_sign, dy_norm/dy_sign
+        angle_top_right = math.atan2(dx_abs, dy_abs)
+
+        # The next code will determine what block we aim at, with angles normalized to top-right.
+        # This can be rotated later if we're not looking to the top-left in mathematical x/y space
+
+        looking_at_top = False
+        looking_at_right = False
+        looking_at_diagonal = False
+
+        if angle_top_right < math.pi/4:
+            looking_at_top = True
+        else:
+            looking_at_right = True
+
+        if math.pi * 2/6 > dx_abs > math.pi/6:
+            looking_at_diagonal = True
+
+        print(looking_at_top, looking_at_diagonal, looking_at_right)
+
+        tile_x, tile_y = self.x // TILE_SIZE_IN_PIXELS, self.y // TILE_SIZE_IN_PIXELS
+        if self.x % TILE_SIZE_IN_PIXELS != 0 and dx_sign == 1:
+            tile_x += 1
+
+        if dy_sign == 1:
+            tile_y += 1
+
+        if looking_at_top:
+            tile_y += dy_sign
+        else:
+            tile_x += dx_sign
+
+        tile = self.world.get_tile_at_indices(tile_x, tile_y)
+        if tile is None:
+            return None
+
+        if (tile.is_solid() and select_solids) or (not tile.is_solid() and not select_solids):
+            return tile
+
+        if looking_at_diagonal:
+            if looking_at_top:
+                tile_x += dx_sign
+            else:
+                tile_y += dy_sign
+
+            tile = self.world.get_tile_at_indices(tile_x, tile_y)
+            if tile is None:
+                return None
+
+            if (tile.is_solid() and select_solids) or (not tile.is_solid() and not select_solids):
+                return tile
+            else:
+                return None
+        return None
+
+    def set_selected_tile(self, tile):
+        self.selected_tile = tile
+
+    def update_selected_tile(self, mouse_pos):
+        mouse_x, mouse_y = mouse_pos
+        self.set_selected_tile(self.find_selected_tile(mouse_x, mouse_y))
