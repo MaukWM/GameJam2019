@@ -8,6 +8,7 @@ from constants import TILE_SIZE_IN_PIXELS, FRAME_RATE, SCREEN_HEIGHT
 from models.items.dropped_item import DroppedItem
 from models.items.dropped_item import DROPPED_ITEM_HEIGHT, DROPPED_ITEM_WIDTH
 from models.world import DIRT_START
+from models.items.item_types import PATHS  # TODO: Add meme path
 
 PLAYER_WIDTH, PLAYER_HEIGHT = TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2
 PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player.png'),
@@ -231,4 +232,11 @@ class Player(object):
         if self.selected_tile is not None and self.selected_tile.is_solid():
             destroyed = self.selected_tile.damage(PLAYER_DAMAGE)
             if destroyed:
+                self.drop_item(self.selected_tile)
                 self.world.destroy_tile(self.selected_tile)
+
+    def drop_item(self, tile):
+        x_tile, y_tile = tile.x * TILE_SIZE_IN_PIXELS, tile.y * TILE_SIZE_IN_PIXELS
+        self.game.entities.append(DroppedItem(self.game, tile.item_type, x_tile, y_tile))
+
+
