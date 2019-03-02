@@ -29,8 +29,6 @@ class Game(object):
         self.entities = []
         self.player = Player(self, 10, 20, memes_enabled)
         self.game_over = False
-        # Uncomment to test item drops :D
-        # self.entities.append(DroppedItem(self, ItemType.JELTSIUM, 400, 20))
 
     def draw(self, surface):
 

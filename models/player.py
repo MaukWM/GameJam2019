@@ -86,7 +86,6 @@ class Player(object):
                 self.y_speed = 0
         self.x, self.y = new_x, new_y
 
-        self.check_entity_collisions()
         if new_tile_y > self.highest_reached_y:
             difference = new_tile_y - self.highest_reached_y
             self.highest_reached_y = new_tile_y
