@@ -61,6 +61,7 @@ class Game(object):
         self.score_to_be_added += 1000 * difference
 
     def step(self):
+        self.world.step()
         # Dynamically add score
         if self.score_to_be_added > 0:
             score_to_be_added_part = self.score_to_be_added // 100  # Divide amount of points to add by 100 and add that
@@ -93,6 +94,6 @@ class Game(object):
 
         # time to maybe spawn a meteor
         if random.randint(0, 1000) > 1000 - self.METEOR_SPAWN_RATE:
-            self.entities.append(Meteor(random.randint(0, SCREEN_WIDTH), random.randint(50, 500) / 100))
+            self.entities.append(Meteor(random.randint(0, SCREEN_WIDTH), random.randint(50, 500) / 100, self.world))
 
         self.player.step()
