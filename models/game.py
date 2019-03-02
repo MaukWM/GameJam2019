@@ -28,6 +28,8 @@ class Game(object):
         # Iets wat niet een blokje of player is is een entity:
         self.entities = []
         self.player = Player(self, 10, 20, memes_enabled)
+        self.game_over = False
+
     def draw(self, surface):
 
         # The camera follows the player:
@@ -80,7 +82,7 @@ class Game(object):
                     # this meteor is below DIRT_START, Check collision
                     try:
                         if entity.is_colliding(TILE_SIZE_IN_PIXELS, self.world.tile_matrix):
-                            self.entities.append(Explosion(entity.x, entity.y))
+                            self.entities.append(Explosion(entity.x, entity.y, entity.width * 3))
                             self.entities.remove(entity)
                     except NotOnScreenError:
                         self.entities.remove(entity)

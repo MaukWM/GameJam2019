@@ -21,21 +21,21 @@ class MenuController(object):
         pygame.font.init()
         self.font = pygame.font.SysFont("Arial", 20)
         self.title_font = pygame.font.SysFont("Arial", 60)
+        if DEV_MODE:
+            game_controller.GameController(self.window, self.meme_mode).run()
+        self.setup()
 
     # Do all necessary setup
     def setup(self):
-        if not DEV_MODE:
-            # draws the title
-            self.title_1_surface = self.title_font.render("METEOR DISASTER", False, (255, 255, 255))
-            self.title_2_surface = self.title_font.render("MINER DELUXE!", False, (255, 255, 255))
+        # draws the title
+        self.title_1_surface = self.title_font.render("METEOR DISASTER", False, (255, 255, 255))
+        self.title_2_surface = self.title_font.render("MINER DELUXE!", False, (255, 255, 255))
 
-            # meme mode checkbox
-            self.meme_mode_text = self.title_font.render("meme mode", False, (255, 255, 255))
+        # meme mode checkbox
+        self.meme_mode_text = self.title_font.render("meme mode", False, (255, 255, 255))
 
-            # start
-            self.start_text = self.title_font.render("START!", False, (0, 255, 0))
-        else:
-            game_controller.GameController(self.window, self.meme_mode).run()
+        # start
+        self.start_text = self.title_font.render("START!", False, (0, 255, 0))
 
 
     # handle a pressed key event in the context of the game root
@@ -64,6 +64,7 @@ class MenuController(object):
         if 520 <= x <= 520+210:
             if 480 <= y <= 480+70:
                 game_controller.GameController(self.window, self.meme_mode).run()
+                self.setup()
 
     # Handle all pygame events
     def handle_events(self):
@@ -94,7 +95,6 @@ class MenuController(object):
 
 
     def run(self):
-        self.setup()
         while True:
             start_time = time.clock()
 
