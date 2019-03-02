@@ -1,6 +1,7 @@
 import pygame
 
 from constants import TILE_SIZE_IN_PIXELS, FRAME_RATE
+from models.items.inventory import Inventory
 
 PLAYER_WIDTH, PLAYER_HEIGHT = TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS*2
 PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS*2))
@@ -14,6 +15,8 @@ class Player(object):
         self.x_speed = 0
         self.y_speed = 0
         self.can_jump = True
+        self.inventory = Inventory()
+        print(self.inventory)
 
     def step(self):
 
@@ -71,6 +74,7 @@ class Player(object):
 
     def draw(self, surface, camera_y):
         surface.blit(PLAYER_SPRITE, (self.x, self.y - camera_y))
+        self.inventory.draw(surface)
 
     def can_move_to_relative_tile_x(self, dx, x=None, y=None):
         """
