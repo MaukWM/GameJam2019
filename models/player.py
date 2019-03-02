@@ -67,7 +67,7 @@ class Player(object):
         self.x, self.y = new_x, new_y
 
         # Realistic friction ;P
-        self.x_speed = 0
+        self.x_speed *= 0.8
 
     def draw(self, surface, camera_y):
         surface.blit(PLAYER_SPRITE, (self.x, self.y - camera_y))
