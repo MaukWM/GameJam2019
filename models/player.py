@@ -14,6 +14,24 @@ from models.world import DIRT_START
 PLAYER_WIDTH, PLAYER_HEIGHT = TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2
 PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player.png'),
                                        (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2))
+
+PLAYER_TORSO = pygame.transform.scale(pygame.image.load('assets/graphics/player/torso.png'),
+                                      (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2))
+PLAYER_TORSO_JUMPING = pygame.transform.scale(pygame.image.load('assets/graphics/player/torso_wooh.png'),
+                                              (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2))
+PLAYER_LEGS_STANDING = pygame.transform.scale(pygame.image.load('assets/graphics/player/legs_standing.png'),
+                                              (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2))
+PLAYER_LEGS_WALKING_FRAMES = [
+    pygame.transform.scale(pygame.image.load('assets/graphics/player/legs_walking_0.png'),
+                           (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2)),
+    pygame.transform.scale(pygame.image.load('assets/graphics/player/legs_walking_1.png'),
+                           (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2)),
+    pygame.transform.scale(pygame.image.load('assets/graphics/player/legs_walking_2.png'),
+                           (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2)),
+    pygame.transform.scale(pygame.image.load('assets/graphics/player/legs_walking_3.png'),
+                           (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2))
+]
+
 PLAYER_DAMAGE = 0.05
 
 
@@ -26,6 +44,7 @@ class Player(object):
         self.y = y
         self.x_speed = 0
         self.y_speed = 0
+        self.walking_state = 0
         self.highest_reached_y = DIRT_START - 2  # -2 because then it works properly
         self.can_jump = True
         self.selected_tile = None
@@ -102,7 +121,6 @@ class Player(object):
                 if isinstance(entity, DroppedItem) or isinstance(entity, Meteor):
                     self.check_entity_collision(entity)
 
-
     def check_entity_collision(self, entity):
         player_box = (self.x, self.y, PLAYER_WIDTH, PLAYER_HEIGHT)
         if isinstance(entity, DroppedItem):
@@ -137,8 +155,35 @@ class Player(object):
         self.game.add_resource_score(entity.item_type)
         self.game.entities.remove(entity)
 
+    def draw_player(self, surface, camera_y):
+        airborne = self.can_jump == False
+        if 0.01 > self.x_speed > -0.01:
+            if airborne:
+                surface.blit(PLAYER_TORSO_JUMPING, (self.x, self.y - camera_y))
+            else:
+                surface.blit(PLAYER_TORSO, (self.x, self.y - camera_y))
+            surface.blit(PLAYER_LEGS_STANDING, (self.x, self.y - camera_y))
+        elif self.x_speed > 0:  # walking to the right
+            if airborne:
+                surface.blit(PLAYER_TORSO_JUMPING, (self.x, self.y - camera_y))
+                surface.blit(PLAYER_LEGS_STANDING, (self.x, self.y - camera_y))
+            else:
+                surface.blit(PLAYER_TORSO, (self.x, self.y - camera_y))
+                self.walking_state = (self.walking_state + 1) % (len(PLAYER_LEGS_WALKING_FRAMES) * 7)
+                surface.blit(PLAYER_LEGS_WALKING_FRAMES[self.walking_state // 7], (self.x, self.y - camera_y))
+
+        else:  # walking to the left
+            if airborne:
+                surface.blit(pygame.transform.flip(PLAYER_TORSO_JUMPING, True, False), (self.x, self.y - camera_y))
+                surface.blit(pygame.transform.flip(PLAYER_LEGS_STANDING, True, False), (self.x, self.y - camera_y))
+            else:
+                surface.blit(pygame.transform.flip(PLAYER_TORSO, True, False), (self.x, self.y - camera_y))
+                self.walking_state = (self.walking_state + 1) % (len(PLAYER_LEGS_WALKING_FRAMES) * 7)
+                surface.blit(pygame.transform.flip(PLAYER_LEGS_WALKING_FRAMES[self.walking_state // 7], True, False),
+                         (self.x, self.y - camera_y))
+
     def draw(self, surface, camera_y):
-        surface.blit(PLAYER_SPRITE, (self.x, self.y - camera_y))
+        self.draw_player(surface, camera_y)
         self.inventory.draw(surface)
         self.health_bar.draw(surface)
         if self.selected_tile is not None:
@@ -222,10 +267,11 @@ class Player(object):
         """
         camera_y = int(self.y - SCREEN_HEIGHT // 2)
         x, y = mouse_x, mouse_y + camera_y
-        tile_x, tile_y = x//TILE_SIZE_IN_PIXELS, y//TILE_SIZE_IN_PIXELS
+        tile_x, tile_y = x // TILE_SIZE_IN_PIXELS, y // TILE_SIZE_IN_PIXELS
 
-        ptile_x_left, ptile_y_top = self.x//TILE_SIZE_IN_PIXELS, self.y//TILE_SIZE_IN_PIXELS
-        ptile_x_right, ptile_y_bot = (self.x + PLAYER_WIDTH-0.01)//TILE_SIZE_IN_PIXELS, (self.y + PLAYER_HEIGHT - 0.01)//TILE_SIZE_IN_PIXELS
+        ptile_x_left, ptile_y_top = self.x // TILE_SIZE_IN_PIXELS, self.y // TILE_SIZE_IN_PIXELS
+        ptile_x_right, ptile_y_bot = (self.x + PLAYER_WIDTH - 0.01) // TILE_SIZE_IN_PIXELS, (
+                    self.y + PLAYER_HEIGHT - 0.01) // TILE_SIZE_IN_PIXELS
 
         dist_x_1 = abs(ptile_x_left - tile_x)
         dist_x_2 = abs(ptile_x_right - tile_x)
