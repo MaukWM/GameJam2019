@@ -2,6 +2,8 @@ import pygame
 
 from constants import TILE_SIZE_IN_PIXELS, FRAME_RATE
 from models.items.inventory import Inventory
+from models.items.dropped_item import DroppedItem
+from models.items.dropped_item import DROPPED_ITEM_HEIGHT, DROPPED_ITEM_WIDTH
 
 PLAYER_WIDTH, PLAYER_HEIGHT = TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS*2
 PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS*2))
@@ -9,8 +11,9 @@ PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player
 
 class Player(object):
 
-    def __init__(self, world, x, y, memes_enabled):
-        self.world = world
+    def __init__(self, game, x, y, memes_enabled):
+        self.game = game
+        self.world = game.world
         self.x = x
         self.y = y
         self.x_speed = 0
@@ -60,7 +63,10 @@ class Player(object):
                 # Reset jump
                 self.can_jump = True
                 new_y = y_tile
-                self.y_speed = 0
+                if self.y_speed < 1:
+                    self.y_speed = 0
+                else:
+                    self.y_speed = -self.y_speed * 0.15
         elif self.y_speed < 0:
             # Moving up, same logic as moving left
             can_move_up = self.can_move_to_relative_tile_y(0, x=new_x, y=new_y)
@@ -69,8 +75,36 @@ class Player(object):
                 self.y_speed = 0
         self.x, self.y = new_x, new_y
 
+        self.check_item_collisions()
+
         # Realistic friction ;P
         self.x_speed *= 0.8
+
+    def check_item_collisions(self):
+        for entity in self.game.entities:
+            if isinstance(entity, DroppedItem):
+                if (self.x - entity.x) < 4 and (self.y - entity.y) < 4:
+                    self.check_collision(entity)
+
+    def check_collision(self, entity: DroppedItem):
+        player_box = (self.x, self.y, PLAYER_WIDTH, PLAYER_HEIGHT)
+        entity_box = (entity.x, entity.y, DROPPED_ITEM_WIDTH, DROPPED_ITEM_HEIGHT)
+        if self.check_overlap(player_box, entity_box):
+            self.consume_item(entity)
+            return True
+        return False
+
+    @staticmethod
+    def check_overlap(box1, box2):
+        if box1[0] > (box2[0] + box2[2]) or (box1[0] + box1[2]) < box2[0]:
+            return False
+        if box1[1] > (box2[1] + box2[3]) or (box1[1] + box1[3]) < box2[1]:
+            return False
+        return True
+
+    def consume_item(self, entity: DroppedItem):
+        self.game.player.inventory.increment_item_amount(entity.item_type)
+        self.game.entities.remove(entity)
 
     def draw(self, surface, camera_y):
         surface.blit(PLAYER_SPRITE, (self.x, self.y - camera_y))
