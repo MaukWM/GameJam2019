@@ -39,6 +39,10 @@ class GameController(object):
         if event_key == pygame.K_RIGHT:
             self.game.player.x_speed = 2
 
+        if event_key == pygame.K_u:
+            if self.game.player.pickaxe.is_upgradeable():
+                self.game.player.pickaxe.upgrade()
+
 
     # Handle all pygame events
     def handle_events(self):

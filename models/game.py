@@ -49,6 +49,12 @@ class Game(object):
         msg_surface = self.font.render("Score: " + str(int(self.score)), True, (255, 255, 255))
         surface.blit(msg_surface, ((SCREEN_WIDTH // 2) - (msg_surface.get_width() // 2), SCREEN_HEIGHT // 50))
 
+        # Check if we can upgrade the players pickaxe, if we can tell the player
+        print(self.player.pickaxe.strength)
+        if self.player.pickaxe.is_upgradeable():
+            pickaxe_upgrade_surface = self.font.render("You have enough resources to upgrade your pickaxe! Press U to upgrade.", True, (255, 255, 255))
+            surface.blit(pickaxe_upgrade_surface, ((SCREEN_WIDTH // 2) - (msg_surface.get_width() // 2), SCREEN_HEIGHT // 50))
+
     def add_resource_score(self, entity: ItemType):
         self.score_to_be_added += SCORES[entity]
 
