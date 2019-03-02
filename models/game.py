@@ -6,6 +6,8 @@ from models.explosion import Explosion
 import random
 import models.world
 import models.tiles.air_tile
+from models.items.dropped_item import DroppedItem
+from models.items.item_types import ItemType
 
 
 class Game(object):
@@ -18,7 +20,9 @@ class Game(object):
 
         # Iets wat niet een blokje of player is is een entity:
         self.entities = []
-        self.player = Player(self.world, 10, 20)
+        self.player = Player(self, 10, 20)
+        # Uncomment to test item drops :D
+        # self.entities.append(DroppedItem(self, ItemType.JELTSIUM, 400, 20))
 
     def draw(self, surface):
 

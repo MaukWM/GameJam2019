@@ -12,7 +12,6 @@ class Meteor(object):
         pygame.image.load('assets/graphics/meteors/stone1.png')
     ]
 
-
     # the angle of the meteor in radians
     angle = 0.7
 
@@ -46,15 +45,6 @@ class Meteor(object):
         surface.blit(self.SPRITE, (to_draw_x, to_draw_y))
 
     def is_colliding(self, TILE_SIZE, game_tiles):
-        try:
-            return game_tiles[math.floor(self.x / TILE_SIZE)][math.floor(self.y / TILE_SIZE)].is_solid() or \
-                   game_tiles[math.floor(self.x / TILE_SIZE)][math.ceil(self.y / TILE_SIZE)].is_solid() or \
-                   game_tiles[math.ceil(self.x / TILE_SIZE)][math.floor(self.y / TILE_SIZE)].is_solid() or \
-                   game_tiles[math.ceil(self.x / TILE_SIZE)][math.ceil(self.y / TILE_SIZE)].is_solid()
-        except IndexError:
-            raise NotOnScreenError()
-
-    def is_colliding(self, TILE_SIZE, game_tiles):
         grid_x = int(self.x / TILE_SIZE)
         grid_y = int(self.y / TILE_SIZE)
         width = len(game_tiles)
@@ -73,9 +63,14 @@ class Meteor(object):
                             if effective_y >= 0 and effective_y < height and effective_x >= 0 and effective_x < width:
                                 it_breaks = game_tiles[effective_x][effective_y].damage(damage)
                                 if it_breaks:
+                                    tile_broken = game_tiles[effective_x][effective_y]
                                     game_tiles[effective_x][effective_y] = models.tiles.air_tile.Air(self, grid_x + delta_x, grid_y + delta_y)
+                                    self.drop_item(effective_x, effective_y, tile_broken)
                 return True
         return False
+
+    def drop_item(self, x, y, tile_broken):
+        pass
 
 class NotOnScreenError(Exception):
     pass
