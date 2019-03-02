@@ -6,6 +6,8 @@ from models.explosion import Explosion
 import random
 import models.world
 import models.tiles.air_tile
+from models.items.dropped_item import DroppedItem
+from models.items.item_types import ItemType
 
 
 class Game(object):
@@ -13,12 +15,14 @@ class Game(object):
     # todo: fix circular dependency and put in constants.py
     METEOR_SPAWN_RATE = 10
 
-    def __init__(self, width, height):
+    def __init__(self, width, height, memes_enabled):
         self.world = World(width, height)
 
         # Iets wat niet een blokje of player is is een entity:
         self.entities = []
-        self.player = Player(self, 10, 20)
+        self.player = Player(self, 10, 20, memes_enabled)
+        # Uncomment to test item drops :D
+        # self.entities.append(DroppedItem(self, ItemType.JELTSIUM, 400, 20))
 
     def draw(self, surface):
 

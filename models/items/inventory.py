@@ -10,8 +10,9 @@ INVENTORY_Y = 20
 
 class Inventory(object):
 
-    def __init__(self):
+    def __init__(self, memes_enabled=False):
         self.inventory = self.init_inventory()
+        self.memes_enabled = memes_enabled
 
     @staticmethod
     def init_inventory():
@@ -35,7 +36,7 @@ class Inventory(object):
         pygame.draw.rect(surface, (100, 100, 100), (ITEM_SIZE_IN_PIXELS, ITEM_SIZE_IN_PIXELS, background_width, background_height))
         # draw every inventory item
         for inv_item in self.inventory:
-            self.inventory[inv_item].draw(surface)
+            self.inventory[inv_item].draw(surface, self.memes_enabled)
         # draw the border of the inventory
         pygame.draw.rect(surface, (30, 30, 30), (ITEM_SIZE_IN_PIXELS - 1, ITEM_SIZE_IN_PIXELS, background_width + 1, background_height), 1)
 
