@@ -20,7 +20,7 @@ class Game(object):
 
         # Iets wat niet een blokje of player is is een entity:
         self.entities = []
-        self.player = Player(self.world, 10, 20, memes_enabled)
+        self.player = Player(self, 10, 20, memes_enabled)
         # Uncomment to test item drops :D
         # self.entities.append(DroppedItem(self, ItemType.JELTSIUM, 400, 20))
 

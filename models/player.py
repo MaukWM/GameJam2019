@@ -14,7 +14,6 @@ class Player(object):
     def __init__(self, game, x, y, memes_enabled):
         self.game = game
         self.world = game.world
-        self.world = world
         self.x = x
         self.y = y
         self.x_speed = 0
