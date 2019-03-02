@@ -25,10 +25,14 @@ class Meteor(object):
         self.size = size
         self.angle = (random.randint(0, 14) - 7) / 10
 
+        # used for step calculations
+        self.delta_x = math.asin(self.angle) * self.speed
+        self.delta_y = math.acos(self.angle) * self.speed
+
     # update the internal state to the next state
     def step(self):
-       self.x += math.asin(self.angle) * self.speed
-       self.y += math.acos(self.angle) * self.speed
+       self.x += self.delta_x
+       self.y += self.delta_y
 
     # draw this meteor at the position in the next frame
     def draw(self, surface, cameray_y):
