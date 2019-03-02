@@ -1,6 +1,6 @@
 import pygame
 
-from constants import TILE_SIZE_IN_PIXELS, FRAME_RATE
+from constants import TILE_SIZE_IN_PIXELS, FRAME_RATE, SCREEN_HEIGHT
 
 PLAYER_WIDTH, PLAYER_HEIGHT = TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS*2
 PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS*2))
@@ -134,3 +134,8 @@ class Player(object):
         if self.can_jump:
             self.can_jump = False
             self.y_speed -= 6.0
+
+    def mine(self, mouse_x, mouse_y):
+        dx = mouse_x - self.x
+        dy = mouse_y - SCREEN_HEIGHT//2
+
