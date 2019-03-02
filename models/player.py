@@ -237,6 +237,6 @@ class Player(object):
 
     def drop_item(self, tile):
         x_tile, y_tile = tile.x * TILE_SIZE_IN_PIXELS, tile.y * TILE_SIZE_IN_PIXELS
-        self.game.entities.append(DroppedItem(self.game, tile.item_type, x_tile, y_tile))
+        self.game.entities.append(DroppedItem(self.game, tile.item_type, x_tile, y_tile, meme_mode=self.game.memes_enabled))
 
 

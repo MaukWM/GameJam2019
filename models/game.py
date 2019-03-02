@@ -24,6 +24,7 @@ class Game(object):
         self.score_to_be_added: int = 0
         self.world = World(width, height)
         self.font = pygame.font.SysFont("Arial", 18)
+        self.memes_enabled = memes_enabled
 
         # Iets wat niet een blokje of player is is een entity:
         self.entities = []

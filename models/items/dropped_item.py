@@ -2,14 +2,14 @@ import pygame
 import random
 
 from constants import TILE_SIZE_IN_PIXELS, FRAME_RATE, DROPPED_ITEM_SIZE
-from models.items.item_types import ItemType, PATHS
+from models.items.item_types import ItemType, PATHS, MEME_PATHS
 
 DROPPED_ITEM_WIDTH, DROPPED_ITEM_HEIGHT = DROPPED_ITEM_SIZE, DROPPED_ITEM_SIZE
 
 
 class DroppedItem(object):
 
-    def __init__(self, game, item_type: ItemType, x: int, y: int):
+    def __init__(self, game, item_type: ItemType, x: int, y: int, meme_mode: bool=False):
         self.item_type = item_type
         self.game = game
         self.world = game.world
@@ -17,8 +17,13 @@ class DroppedItem(object):
         self.y = y
         self.x_speed = 0
         self.y_speed = 0
+        self.meme_mode = meme_mode
         item_x_center = self.x + (DROPPED_ITEM_SIZE // 3)
         self.draw_x = item_x_center + random.randint(-(DROPPED_ITEM_SIZE // 4), (DROPPED_ITEM_SIZE // 4))
+        if meme_mode:
+            self.dropped_item_sprite = pygame.transform.scale(pygame.image.load(MEME_PATHS[self.item_type]["location"]), (DROPPED_ITEM_SIZE, DROPPED_ITEM_SIZE))
+        else:
+            self.dropped_item_sprite = pygame.transform.scale(pygame.image.load(PATHS[self.item_type]["location"]), (DROPPED_ITEM_SIZE, DROPPED_ITEM_SIZE))
 
     def step(self):
 
@@ -57,8 +62,7 @@ class DroppedItem(object):
         self.y = new_y
 
     def draw(self, surface, camera_y):
-        dropped_item_sprite = pygame.transform.scale(pygame.image.load(PATHS[self.item_type]["location"]), (DROPPED_ITEM_SIZE, DROPPED_ITEM_SIZE))
-        surface.blit(dropped_item_sprite, (self.draw_x, self.y - camera_y))
+        surface.blit(self.dropped_item_sprite, (self.draw_x, self.y - camera_y))
 
     def can_move_to_relative_tile_y(self, dy, x=None, y=None):
         """
