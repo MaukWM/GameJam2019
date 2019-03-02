@@ -1,24 +1,28 @@
 import pygame
 import sys
+import random
 
 
 class Explosion:
 
     frames = list(map(lambda x: pygame.image.load('assets/graphics/explosions/frame_' + str(x) + '_delay-0.08s.png'), range(0, 12)))
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, impact_radius):
         self.frame_counter = -1
-        self.x = x - 40
-        self.y = y - 75
+        self.x = x
+        self.y = y
+        self.damage = self.impact_radius = impact_radius
 
     def step(self):
         self.frame_counter += 1
 
     def draw(self, surface, camera_y):
         try:
-            to_draw_y = self.y - camera_y
-            to_draw_x= self.x
-            surface.blit(self.frames[self.frame_counter // 4], (to_draw_x, to_draw_y))
+            to_draw_y = self.y - camera_y - (self.impact_radius // 2)
+            to_draw_x = self.x - (self.impact_radius // 2)
+            to_blit = self.frames[self.frame_counter // 4]
+            to_blit = pygame.transform.scale(to_blit, (self.impact_radius, self.impact_radius))
+            surface.blit(to_blit, (to_draw_x, to_draw_y))
         except IndexError:
             print("IndexError happened: y, x, frame_counter:")
             print(self.y - camera_y)
