@@ -31,7 +31,13 @@ class Inventory(object):
         # Height of background is all the item * their size + a bit more for a border
         background_height = len(self.inventory) * ITEM_SIZE_IN_PIXELS
         # magic for now
-        background_width = ITEM_SIZE_IN_PIXELS * 2
+        highest_digit_count = 0
+        for inv_item in self.inventory:
+            len_inv_item = len(str(self.inventory[inv_item].amount))
+            if len_inv_item > highest_digit_count:
+                highest_digit_count = len_inv_item
+        print(highest_digit_count)
+        background_width = ITEM_SIZE_IN_PIXELS * 2 + ((highest_digit_count - 1) * 10)
         # draw background of inventory
         pygame.draw.rect(surface, (100, 100, 100), (ITEM_SIZE_IN_PIXELS, ITEM_SIZE_IN_PIXELS, background_width, background_height))
         # draw every inventory item
