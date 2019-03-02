@@ -1,6 +1,7 @@
 from models.tiles.dirt_tile import Dirt
 from models.tiles.air_tile import Air
 from models.tiles.stone_tile import Stone
+from constants import TILE_SIZE_IN_PIXELS
 from models.tiles.jeltisium_tile import Jeltisnium
 from models.tiles.leninium_tile import Leninium
 from models.tiles.marxinium_tile import Marxinium
@@ -94,6 +95,17 @@ class World(object):
                     continue
             world_matrix.append(column)
         return world_matrix
+
+    def get_tile_at_indices(self, tile_x, tile_y):
+        if tile_x < 0 or tile_y < 0:
+            return None
+        try:
+            return self.tile_matrix[tile_x][tile_y]
+        except IndexError:
+            return None
+
+    def get_tile_at(self, x, y):
+        return self.get_tile_at_indices(x//TILE_SIZE_IN_PIXELS, y//TILE_SIZE_IN_PIXELS)
 
     # hahaha lelijke functie dit eks dee ik wil dood
     def decide_resource(self, x, y, height):
