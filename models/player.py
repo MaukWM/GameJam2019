@@ -1,12 +1,17 @@
+import math
+
 import pygame
 
 from constants import TILE_SIZE_IN_PIXELS, FRAME_RATE
 from models.items.inventory import Inventory
+from constants import TILE_SIZE_IN_PIXELS, FRAME_RATE, SCREEN_HEIGHT
 from models.items.dropped_item import DroppedItem
 from models.items.dropped_item import DROPPED_ITEM_HEIGHT, DROPPED_ITEM_WIDTH
 
-PLAYER_WIDTH, PLAYER_HEIGHT = TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS*2
-PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS*2))
+PLAYER_WIDTH, PLAYER_HEIGHT = TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2
+PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player.png'),
+                                       (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2))
+PLAYER_DAMAGE = 0.05
 
 
 class Player(object):
@@ -19,6 +24,7 @@ class Player(object):
         self.x_speed = 0
         self.y_speed = 0
         self.can_jump = True
+        self.selected_tile = None
         self.inventory = Inventory(memes_enabled)
 
     def step(self):
@@ -109,6 +115,14 @@ class Player(object):
     def draw(self, surface, camera_y):
         surface.blit(PLAYER_SPRITE, (self.x, self.y - camera_y))
         self.inventory.draw(surface)
+        if self.selected_tile is not None:
+            rect = (
+                self.selected_tile.x * TILE_SIZE_IN_PIXELS,
+                self.selected_tile.y * TILE_SIZE_IN_PIXELS - camera_y,
+                TILE_SIZE_IN_PIXELS,
+                TILE_SIZE_IN_PIXELS,
+            )
+            pygame.draw.rect(surface, (255, 0, 0), rect, 3)
 
     def can_move_to_relative_tile_x(self, dx, x=None, y=None):
         """
@@ -172,3 +186,41 @@ class Player(object):
         if self.can_jump:
             self.can_jump = False
             self.y_speed -= 6.0
+
+    def find_selected_tile(self, mouse_x, mouse_y):
+        """
+        Finds the selected tile (with the mouse) and returns it if it's close enough
+        :param mouse_x: The x-position of the mouse on the screen
+        :param mouse_y: The y-position of the mouse on the screen
+        :return: A tile if there's a close enough tile there, otherwise None
+        """
+        camera_y = int(self.y - SCREEN_HEIGHT // 2)
+        x, y = mouse_x, mouse_y + camera_y
+        tile_x, tile_y = x//TILE_SIZE_IN_PIXELS, y//TILE_SIZE_IN_PIXELS
+
+        ptile_x_left, ptile_y_top = self.x//TILE_SIZE_IN_PIXELS, self.y//TILE_SIZE_IN_PIXELS
+        ptile_x_right, ptile_y_bot = (self.x + PLAYER_WIDTH-0.01)//TILE_SIZE_IN_PIXELS, (self.y + PLAYER_HEIGHT - 0.01)//TILE_SIZE_IN_PIXELS
+
+        dist_x_1 = abs(ptile_x_left - tile_x)
+        dist_x_2 = abs(ptile_x_right - tile_x)
+        dist_y_1 = abs(ptile_y_bot - tile_y)
+        dist_y_2 = abs(ptile_y_top - tile_y)
+
+        if (min(dist_x_1, dist_x_2) == 1 and max(dist_y_1, dist_y_2) <= 2) or \
+                (min(dist_y_1, dist_y_2) == 1 and max(dist_x_1, dist_x_2) <= 1):
+            return self.world.get_tile_at_indices(tile_x, tile_y)
+        else:
+            return None
+
+    def set_selected_tile(self, tile):
+        self.selected_tile = tile
+
+    def update_selected_tile(self, mouse_pos):
+        mouse_x, mouse_y = mouse_pos
+        self.set_selected_tile(self.find_selected_tile(mouse_x, mouse_y))
+
+    def mine(self):
+        if self.selected_tile is not None and self.selected_tile.is_solid():
+            destroyed = self.selected_tile.damage(PLAYER_DAMAGE)
+            if destroyed:
+                self.world.destroy_tile(self.selected_tile)
