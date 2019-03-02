@@ -67,7 +67,7 @@ class GameController(object):
             # update the state of the game
             self.update_state()
 
-            self.window.fill((0, 0, 0))
+            self.window.fill((70, 70, 150))
 
             self.draw()
 

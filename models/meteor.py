@@ -1,6 +1,7 @@
 from constants import FRAME_RATE
 import math
 import pygame
+import models.tiles.air_tile
 
 
 class Meteor(object):
@@ -33,3 +34,8 @@ class Meteor(object):
         to_draw_x= self.x
         surface.blit(self.METEOR_SPRITE, (to_draw_x, to_draw_y))
 
+    def is_colliding(self, DIRT_START, TILE_SIZE, game_tiles):
+        if type(game_tiles[int(self.y / TILE_SIZE)][int(self.x / TILE_SIZE)]) != models.tiles.air_tile.Air:
+            # The x,y-position of this meteor contains a non-air tile, collision
+            return True
+        return False
