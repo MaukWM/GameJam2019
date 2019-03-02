@@ -2,6 +2,9 @@ from models.tiles.tile import Tile
 
 
 class Air(Tile):
+    def get_strength(self):
+        return 0
+
     def draw(self, surface, camera_y):
         pass
 
