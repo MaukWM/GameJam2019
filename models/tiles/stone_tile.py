@@ -5,7 +5,11 @@ from models.tiles.tile import Tile
 
 STONE_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/stone.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
 
+
 class Stone(Tile):
+    def get_strength(self):
+        return 10.0
+
     def is_solid(self):
         return True
 

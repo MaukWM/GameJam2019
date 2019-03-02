@@ -7,6 +7,7 @@ from models.tiles.leninium_tile import Leninium
 from models.tiles.marxinium_tile import Marxinium
 from models.tiles.nokia_phonium_tile import NokiaPhonium
 from models.tiles.half_liter_klokkium_tile import HalfLiterKlokkium
+from constants import TILE_SIZE_IN_PIXELS, SCREEN_HEIGHT
 import random
 import bisect
 import math
@@ -193,8 +194,12 @@ class World(object):
         return 1 / (1 + math.exp(-x))
 
     def draw(self, surface, camera_y):
+        # Calculate bounds based on camera y to reduce lag drastically
+        min_y = max(0, camera_y//TILE_SIZE_IN_PIXELS - 1)
+        max_y = min(self.height, (camera_y + SCREEN_HEIGHT)//TILE_SIZE_IN_PIXELS + 1)
+
         for x in range(self.width):
-            for y in range(self.height):
+            for y in range(min_y, max_y):
                 self.tile_matrix[x][y].draw(surface, camera_y)
 
     def __repr__(self):
