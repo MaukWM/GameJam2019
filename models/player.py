@@ -92,7 +92,7 @@ class Player(object):
             self.highest_reached_y = new_tile_y
             self.game.add_depth_score(difference)
 
-        self.check_item_collisions()
+        self.check_entity_collisions()
 
         # Realistic friction ;P
         self.x_speed *= 0.8
