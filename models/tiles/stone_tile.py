@@ -15,3 +15,10 @@ class Stone(Tile):
     def draw(self, surface, camera_y):
         x, y = self.x * TILE_SIZE_IN_PIXELS, self.y * TILE_SIZE_IN_PIXELS - camera_y
         surface.blit(STONE_SPRITE, (x, y))
+
+    def damage(self, amount):
+        self.stability -= amount
+        if self.stability <= 0:
+            return True             #it breaks
+        else:
+            return False            #it doesn't break

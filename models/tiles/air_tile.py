@@ -10,3 +10,6 @@ class Air(Tile):
 
     def is_solid(self):
         return False
+
+    def damage(self, amount):
+        pass #this method needs to be able to be called but air cannot be damaged

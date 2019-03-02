@@ -27,3 +27,10 @@ class Dirt(Tile):
 
     def is_grass(self):
         return self.is_grass
+
+    def damage(self, amount):
+        self.stability -= amount
+        if self.stability <= 0:
+            return True             #it breaks
+        else:
+            return False            #it doesn't break
