@@ -20,6 +20,12 @@ class Inventory(object):
             inventory[item_type] = InventoryItem(item_type, 0)
         return inventory
 
+    def increment_item_amount(self, item_type: ItemType):
+        self.inventory[item_type].amount = self.inventory[item_type].amount + 1
+
+    def decrement_item_amount(self, item_type: ItemType):
+        self.inventory[item_type].amount = self.inventory[item_type].amount - 1
+
     def draw(self, surface):
         # Height of background is all the item * their size + a bit more for a border
         background_height = len(self.inventory) * ITEM_SIZE_IN_PIXELS
@@ -27,8 +33,10 @@ class Inventory(object):
         background_width = ITEM_SIZE_IN_PIXELS * 2
         # draw background of inventory
         pygame.draw.rect(surface, (100, 100, 100), (ITEM_SIZE_IN_PIXELS, ITEM_SIZE_IN_PIXELS, background_width, background_height))
+        # draw every inventory item
         for inv_item in self.inventory:
             self.inventory[inv_item].draw(surface)
+        # draw the border of the inventory
         pygame.draw.rect(surface, (30, 30, 30), (ITEM_SIZE_IN_PIXELS - 1, ITEM_SIZE_IN_PIXELS, background_width + 1, background_height), 1)
 
     def __repr__(self):

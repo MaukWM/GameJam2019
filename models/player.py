@@ -16,7 +16,6 @@ class Player(object):
         self.y_speed = 0
         self.can_jump = True
         self.inventory = Inventory()
-        print(self.inventory)
 
     def step(self):
 
