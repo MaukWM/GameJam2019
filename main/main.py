@@ -10,6 +10,8 @@ if __name__ == "__main__":
     pygame.font.init()
 
     # TODO: This should *eventually* be uncommented
-    #menu_controller = MenuController()
+    # menu_controller = MenuController()
     game_controller = GameController(window)
     game_controller.run()
+
+

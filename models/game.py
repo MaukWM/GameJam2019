@@ -1,9 +1,16 @@
 from models.player import Player
 from models.world import World
-from constants import TILE_SIZE_IN_PIXELS, SCREEN_HEIGHT
-
+from constants import TILE_SIZE_IN_PIXELS, SCREEN_HEIGHT, SCREEN_WIDTH
+from models.meteor import Meteor
+import random
+import models.world
+import models.tiles.air_tile
 
 class Game(object):
+
+    # todo: fix circular dependency and put in constants.py
+    METEOR_SPAWN_RATE = 10
+
     def __init__(self, width, height):
         self.world = World(width, height)
 
@@ -27,5 +34,16 @@ class Game(object):
             entity.draw(surface, camera_y)
 
     def step(self):
-        # Do game logic n stuff
+        for entity in self.entities:
+            entity.step()
+            if type(entity) is Meteor:
+                if entity.y >= models.world.DIRT_START * TILE_SIZE_IN_PIXELS:
+                    # this meteor is below DIRT_START, Check collision
+                    if entity.is_colliding(models.world.DIRT_START, TILE_SIZE_IN_PIXELS, self.world.tile_matrix):
+                        self.entities.remove(entity)
+
+        # time to maybe spawn a meteor
+        if random.randint(0, 1000) > 1000 - self.METEOR_SPAWN_RATE:
+            self.entities.append(Meteor(random.randint(0, SCREEN_WIDTH), random.randint(50, 500) / 100))
+
         self.player.step()
