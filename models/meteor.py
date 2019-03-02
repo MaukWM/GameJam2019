@@ -32,7 +32,6 @@ class Meteor(object):
         self.width = sizes_and_sprite[0]
         self.height = sizes_and_sprite[1]
         self.SPRITE = sizes_and_sprite[2]
-        self.SPRITE = self.sprites[random.randint(0, len(self.sprites) - 1)]
         self.world = world
 
         # used for step calculations

@@ -14,6 +14,8 @@ class Marxinium(Tile):
         self.item_type = ItemType.MARXINIUM
 
     def get_strength(self):
+        return 1
+
     def get_resistance(self):
         return 10.0
 

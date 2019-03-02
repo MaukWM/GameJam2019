@@ -14,6 +14,8 @@ class Leninium(Tile):
         self.item_type = ItemType.LENINIUM
 
     def get_strength(self):
+        return 1
+
     def get_resistance(self):
         return 20.0
 
