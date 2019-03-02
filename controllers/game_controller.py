@@ -11,6 +11,7 @@ class GameController(object):
         self.game = Game(SCREEN_WIDTH//TILE_SIZE_IN_PIXELS, 512)
         self.window = window
         self.held_keys = set()
+        self.held_mouse_buttons = set()
 
     # Do all necessary setup
     def setup(self):
@@ -37,6 +38,7 @@ class GameController(object):
         if event_key == pygame.K_RIGHT:
             self.game.player.x_speed = 2
 
+
     # Handle all pygame events
     def handle_events(self):
         for event in pygame.event.get():
@@ -50,8 +52,17 @@ class GameController(object):
             if event.type == pygame.KEYUP:
                 self.held_keys.remove(event.key)
 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                self.held_mouse_buttons.add(event.button)
+
+            if event.type == pygame.MOUSEBUTTONUP:
+                self.held_mouse_buttons.remove(event.button)
+
         for key in self.held_keys:
             self.handle_key_held(key)
+
+        for button in self.held_mouse_buttons:
+            self.handle_button_held(button)
 
 
     # Do all updates to the game state in this function
@@ -82,3 +93,14 @@ class GameController(object):
                 time.sleep((1 / FRAME_RATE) - running_time)
 
             pygame.display.update()
+
+    def handle_button_held(self, button):
+        print(button)
+
+        if button == 1:
+            # LMB
+            self.game.player.mine()
+
+        if button == 3:
+            # RMB
+            pass

@@ -202,6 +202,13 @@ class World(object):
             for y in range(min_y, max_y):
                 self.tile_matrix[x][y].draw(surface, camera_y)
 
+    def destroy_tile_on_indices(self, tile_x, tile_y):
+        if self.get_tile_at_indices(tile_x, tile_y) is not None:
+            self.tile_matrix[tile_x][tile_y] = Air(self, tile_x, tile_y)
+
+    def destroy_tile(self, tile):
+        self.destroy_tile_on_indices(tile.x, tile.y)
+
     def __repr__(self):
         s = ""
         for y in range(self.height):

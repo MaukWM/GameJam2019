@@ -8,7 +8,7 @@ from constants import TILE_SIZE_IN_PIXELS, FRAME_RATE, SCREEN_HEIGHT
 
 PLAYER_WIDTH, PLAYER_HEIGHT = TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS*2
 PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS*2))
-
+PLAYER_DAMAGE = 0.05
 
 class Player(object):
 
@@ -153,7 +153,7 @@ class Player(object):
 
     def find_selected_tile(self, mouse_x, mouse_y, select_solids=True):
         dx = mouse_x - self.x
-        dy = mouse_y - SCREEN_HEIGHT//2
+        dy = mouse_y - SCREEN_HEIGHT//2 - TILE_SIZE_IN_PIXELS
 
         distance_to_mouse = (dx**2 + dy**2)**0.5
 
@@ -178,10 +178,8 @@ class Player(object):
         else:
             looking_at_right = True
 
-        if math.pi * 2/6 > dx_abs > math.pi/6:
+        if 2/3 > dx_abs > 1/3:
             looking_at_diagonal = True
-
-        print(looking_at_top, looking_at_diagonal, looking_at_right)
 
         tile_x, tile_y = self.x // TILE_SIZE_IN_PIXELS, self.y // TILE_SIZE_IN_PIXELS
         if self.x % TILE_SIZE_IN_PIXELS != 0 and dx_sign == 1:
@@ -224,3 +222,9 @@ class Player(object):
     def update_selected_tile(self, mouse_pos):
         mouse_x, mouse_y = mouse_pos
         self.set_selected_tile(self.find_selected_tile(mouse_x, mouse_y))
+
+    def mine(self):
+        if self.selected_tile is not None:
+            destroyed = self.selected_tile.damage(PLAYER_DAMAGE)
+            if destroyed:
+                self.world.destroy_tile(self.selected_tile)
