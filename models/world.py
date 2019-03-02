@@ -105,7 +105,7 @@ class World(object):
         if tile_x < 0 or tile_y < 0:
             return None
         try:
-            return self.tile_matrix[tile_x][tile_y]
+            return self.tile_matrix[int(tile_x)][int(tile_y)]
         except IndexError:
             return None
 
@@ -195,6 +195,13 @@ class World(object):
         for x in range(self.width):
             for y in range(min_y, max_y):
                 self.tile_matrix[x][y].draw(surface, camera_y)
+
+    def destroy_tile_on_indices(self, tile_x, tile_y):
+        if self.get_tile_at_indices(tile_x, tile_y) is not None:
+            self.tile_matrix[tile_x][tile_y] = Air(self, tile_x, tile_y)
+
+    def destroy_tile(self, tile):
+        self.destroy_tile_on_indices(tile.x, tile.y)
 
     def __repr__(self):
         s = ""

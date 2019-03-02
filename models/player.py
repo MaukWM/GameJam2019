@@ -1,21 +1,30 @@
+import math
+
 import pygame
 
 from constants import TILE_SIZE_IN_PIXELS, FRAME_RATE
 from models.items.inventory import Inventory
+from constants import TILE_SIZE_IN_PIXELS, FRAME_RATE, SCREEN_HEIGHT
+from models.items.dropped_item import DroppedItem
+from models.items.dropped_item import DROPPED_ITEM_HEIGHT, DROPPED_ITEM_WIDTH
 
-PLAYER_WIDTH, PLAYER_HEIGHT = TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS*2
-PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS*2))
+PLAYER_WIDTH, PLAYER_HEIGHT = TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2
+PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player.png'),
+                                       (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2))
+PLAYER_DAMAGE = 0.05
 
 
 class Player(object):
 
-    def __init__(self, world, x, y, memes_enabled):
-        self.world = world
+    def __init__(self, game, x, y, memes_enabled):
+        self.game = game
+        self.world = game.world
         self.x = x
         self.y = y
         self.x_speed = 0
         self.y_speed = 0
         self.can_jump = True
+        self.selected_tile = None
         self.inventory = Inventory(memes_enabled)
 
     def step(self):
@@ -60,7 +69,10 @@ class Player(object):
                 # Reset jump
                 self.can_jump = True
                 new_y = y_tile
-                self.y_speed = 0
+                if self.y_speed < 1:
+                    self.y_speed = 0
+                else:
+                    self.y_speed = -self.y_speed * 0.15
         elif self.y_speed < 0:
             # Moving up, same logic as moving left
             can_move_up = self.can_move_to_relative_tile_y(0, x=new_x, y=new_y)
@@ -69,12 +81,48 @@ class Player(object):
                 self.y_speed = 0
         self.x, self.y = new_x, new_y
 
+        self.check_item_collisions()
+
         # Realistic friction ;P
         self.x_speed *= 0.8
+
+    def check_item_collisions(self):
+        for entity in self.game.entities:
+            if isinstance(entity, DroppedItem):
+                if (self.x - entity.x) < 4 and (self.y - entity.y) < 4:
+                    self.check_collision(entity)
+
+    def check_collision(self, entity: DroppedItem):
+        player_box = (self.x, self.y, PLAYER_WIDTH, PLAYER_HEIGHT)
+        entity_box = (entity.x, entity.y, DROPPED_ITEM_WIDTH, DROPPED_ITEM_HEIGHT)
+        if self.check_overlap(player_box, entity_box):
+            self.consume_item(entity)
+            return True
+        return False
+
+    @staticmethod
+    def check_overlap(box1, box2):
+        if box1[0] > (box2[0] + box2[2]) or (box1[0] + box1[2]) < box2[0]:
+            return False
+        if box1[1] > (box2[1] + box2[3]) or (box1[1] + box1[3]) < box2[1]:
+            return False
+        return True
+
+    def consume_item(self, entity: DroppedItem):
+        self.game.player.inventory.increment_item_amount(entity.item_type)
+        self.game.entities.remove(entity)
 
     def draw(self, surface, camera_y):
         surface.blit(PLAYER_SPRITE, (self.x, self.y - camera_y))
         self.inventory.draw(surface)
+        if self.selected_tile is not None:
+            rect = (
+                self.selected_tile.x * TILE_SIZE_IN_PIXELS,
+                self.selected_tile.y * TILE_SIZE_IN_PIXELS - camera_y,
+                TILE_SIZE_IN_PIXELS,
+                TILE_SIZE_IN_PIXELS,
+            )
+            pygame.draw.rect(surface, (255, 0, 0), rect, 3)
 
     def can_move_to_relative_tile_x(self, dx, x=None, y=None):
         """
@@ -138,3 +186,41 @@ class Player(object):
         if self.can_jump:
             self.can_jump = False
             self.y_speed -= 6.0
+
+    def find_selected_tile(self, mouse_x, mouse_y):
+        """
+        Finds the selected tile (with the mouse) and returns it if it's close enough
+        :param mouse_x: The x-position of the mouse on the screen
+        :param mouse_y: The y-position of the mouse on the screen
+        :return: A tile if there's a close enough tile there, otherwise None
+        """
+        camera_y = int(self.y - SCREEN_HEIGHT // 2)
+        x, y = mouse_x, mouse_y + camera_y
+        tile_x, tile_y = x//TILE_SIZE_IN_PIXELS, y//TILE_SIZE_IN_PIXELS
+
+        ptile_x_left, ptile_y_top = self.x//TILE_SIZE_IN_PIXELS, self.y//TILE_SIZE_IN_PIXELS
+        ptile_x_right, ptile_y_bot = (self.x + PLAYER_WIDTH-0.01)//TILE_SIZE_IN_PIXELS, (self.y + PLAYER_HEIGHT - 0.01)//TILE_SIZE_IN_PIXELS
+
+        dist_x_1 = abs(ptile_x_left - tile_x)
+        dist_x_2 = abs(ptile_x_right - tile_x)
+        dist_y_1 = abs(ptile_y_bot - tile_y)
+        dist_y_2 = abs(ptile_y_top - tile_y)
+
+        if (min(dist_x_1, dist_x_2) == 1 and max(dist_y_1, dist_y_2) <= 2) or \
+                (min(dist_y_1, dist_y_2) == 1 and max(dist_x_1, dist_x_2) <= 1):
+            return self.world.get_tile_at_indices(tile_x, tile_y)
+        else:
+            return None
+
+    def set_selected_tile(self, tile):
+        self.selected_tile = tile
+
+    def update_selected_tile(self, mouse_pos):
+        mouse_x, mouse_y = mouse_pos
+        self.set_selected_tile(self.find_selected_tile(mouse_x, mouse_y))
+
+    def mine(self):
+        if self.selected_tile is not None and self.selected_tile.is_solid():
+            destroyed = self.selected_tile.damage(PLAYER_DAMAGE)
+            if destroyed:
+                self.world.destroy_tile(self.selected_tile)
