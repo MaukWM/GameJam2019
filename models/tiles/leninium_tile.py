@@ -7,7 +7,7 @@ STONE_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/stone.p
 
 
 class Leninium(Tile):
-    def get_strength(self):
+    def get_resistance(self):
         return 20.0
 
     def is_solid(self):

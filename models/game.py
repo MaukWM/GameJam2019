@@ -36,6 +36,7 @@ class Game(object):
             entity.draw(surface, camera_y)
 
     def step(self):
+        self.world.step()
         for entity in self.entities:
             entity.step()
             if type(entity) is Meteor:

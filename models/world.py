@@ -11,7 +11,9 @@ from constants import TILE_SIZE_IN_PIXELS, SCREEN_HEIGHT
 import random
 import bisect
 import math
-
+#values related to falling blocks
+ADDSTAB_CUTOFF = 0.1
+ROWS_UPDATED_PER_FRAME = 10
 # These values are from above
 DIRT_START = 20
 STONE_START = 35
@@ -33,7 +35,7 @@ RATIO_MAX = 1
 
 
 class World(object):
-
+    shitty_counter = 0
     def __init__(self, width, height):
         """
         :param width: Width in tiles
@@ -42,6 +44,8 @@ class World(object):
         self.tile_matrix = self.gen_world(width, height)
         self.width = width
         self.height = height
+        self.row_counter = height - 1
+
 
     def gen_world(self, width, height):
         """
@@ -202,6 +206,39 @@ class World(object):
         return s
 
 
+    def update_should_fall(self):
+        #for row in range(self.height - 1, 0, -1):
+        for i in range(ROWS_UPDATED_PER_FRAME):
+            for cell in range(self.width):
+                self.get_tile_at_indices(cell, self.row_counter - 1).reset_stability()
+            for cell in range(self.width):
+                self.update_stabilities(cell, self.row_counter)
+            for cell in range(self.width):
+                self.get_tile_at_indices(cell, self.row_counter - 1).check_stability()
+            self.row_counter -= 1
+            if self.row_counter == 0:
+                self.row_counter = self.height - 1
+
+    def update_stabilities(self, x, y):
+        source = self.get_tile_at_indices(x, y)
+        if source.is_solid():
+            startstabb = source.get_stability() * self.get_tile_at_indices(x, y - 1).get_strength()
+            addstab = startstabb
+            self.get_tile_at_indices(x, y - 1).update_stability(addstab)
+            i = 1
+            while addstab > ADDSTAB_CUTOFF and i + x < self.width and i < 4:
+                self.get_tile_at_indices(i + x, y - 1).update_stability(addstab)
+                addstab *= self.get_tile_at_indices(i + x, y - 1).get_strength()
+                i += 1
+            addstab = startstabb
+            i = -1
+            while addstab > ADDSTAB_CUTOFF and x + i >= 0 and i > -4:
+                self.get_tile_at_indices(x + i, y - 1).update_stability(addstab)
+                addstab *= self.get_tile_at_indices(x + i, y - 1).get_strength()
+                i -= 1
+
+    def step(self):
+        self.update_should_fall()
 if __name__ == "__main__":
     world = World(64, 1024)
     print(world)
