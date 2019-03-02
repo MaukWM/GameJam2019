@@ -56,7 +56,7 @@ class GameController(object):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 self.held_mouse_buttons.add(event.button)
 
-            if event.type == pygame.MOUSEBUTTONUP:
+            if event.type == pygame.MOUSEBUTTONUP and event.button in self.held_mouse_buttons:
                 self.held_mouse_buttons.remove(event.button)
 
         for key in self.held_keys:
