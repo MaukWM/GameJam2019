@@ -46,15 +46,6 @@ class Meteor(object):
         surface.blit(self.SPRITE, (to_draw_x, to_draw_y))
 
     def is_colliding(self, TILE_SIZE, game_tiles):
-        try:
-            return game_tiles[math.floor(self.x / TILE_SIZE)][math.floor(self.y / TILE_SIZE)].is_solid() or \
-                   game_tiles[math.floor(self.x / TILE_SIZE)][math.ceil(self.y / TILE_SIZE)].is_solid() or \
-                   game_tiles[math.ceil(self.x / TILE_SIZE)][math.floor(self.y / TILE_SIZE)].is_solid() or \
-                   game_tiles[math.ceil(self.x / TILE_SIZE)][math.ceil(self.y / TILE_SIZE)].is_solid()
-        except IndexError:
-            raise NotOnScreenError()
-
-    def is_colliding(self, TILE_SIZE, game_tiles):
         grid_x = int(self.x / TILE_SIZE)
         grid_y = int(self.y / TILE_SIZE)
         width = len(game_tiles)

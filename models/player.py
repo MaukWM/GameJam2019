@@ -9,14 +9,14 @@ PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player
 
 class Player(object):
 
-    def __init__(self, world, x, y):
+    def __init__(self, world, x, y, memes_enabled):
         self.world = world
         self.x = x
         self.y = y
         self.x_speed = 0
         self.y_speed = 0
         self.can_jump = True
-        self.inventory = Inventory()
+        self.inventory = Inventory(memes_enabled)
 
     def step(self):
 
