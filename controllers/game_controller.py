@@ -64,7 +64,7 @@ class GameController(object):
 
     def run(self):
         self.setup()
-        while True:
+        while not self.game.game_over:
             start_time = time.clock()
 
             # handle pygame events from the queue

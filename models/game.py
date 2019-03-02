@@ -13,7 +13,7 @@ from models.items.item_types import ItemType
 class Game(object):
 
     # todo: fix circular dependency and put in constants.py
-    METEOR_SPAWN_RATE = 10
+    METEOR_SPAWN_RATE = 100
 
     def __init__(self, width, height, memes_enabled):
         self.world = World(width, height)
@@ -21,6 +21,7 @@ class Game(object):
         # Iets wat niet een blokje of player is is een entity:
         self.entities = []
         self.player = Player(self, 10, 20, memes_enabled)
+        self.game_over = False
         # Uncomment to test item drops :D
         # self.entities.append(DroppedItem(self, ItemType.JELTSIUM, 400, 20))
 
@@ -47,7 +48,7 @@ class Game(object):
                     # this meteor is below DIRT_START, Check collision
                     try:
                         if entity.is_colliding(TILE_SIZE_IN_PIXELS, self.world.tile_matrix):
-                            self.entities.append(Explosion(entity.x, entity.y))
+                            self.entities.append(Explosion(entity.x, entity.y, entity.width * 3))
                             self.entities.remove(entity)
                     except NotOnScreenError:
                         self.entities.remove(entity)
