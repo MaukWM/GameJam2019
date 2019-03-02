@@ -1,7 +1,6 @@
 import math
 import pygame
 
-from constants import TILE_SIZE_IN_PIXELS, FRAME_RATE
 from models.items.inventory import Inventory
 from constants import TILE_SIZE_IN_PIXELS, FRAME_RATE, SCREEN_HEIGHT
 from models.items.dropped_item import DroppedItem
@@ -11,9 +10,9 @@ from models.explosion import Explosion
 from models.healthbar import HealthBar
 from models.world import DIRT_START
 
-PLAYER_WIDTH, PLAYER_HEIGHT = TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2
+PLAYER_WIDTH, PLAYER_HEIGHT = 28, 60
 PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player.png'),
-                                       (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2))
+                                       (PLAYER_WIDTH, PLAYER_HEIGHT))
 PLAYER_DAMAGE = 0.05
 
 
@@ -50,10 +49,13 @@ class Player(object):
             # We're moving right
             # Check if we can move further right in the tile we're in at the new timestep
             # The y-position is kept at the old value for now, since it has not been validated yet
-            can_move_right = self.can_move_to_relative_tile_x(1, x=new_x, y=self.y)
+            can_move_right = self.can_move_to_relative_tile_x(0, x=new_x + PLAYER_WIDTH, y=self.y)
+
+            # Compute the tile index of the tile containing the right side of the player
+            x_tile_right = ((new_x + PLAYER_WIDTH) // TILE_SIZE_IN_PIXELS)*TILE_SIZE_IN_PIXELS
             if not can_move_right:
                 # If we can't, keep the player at the edge of the tile we're in at the new timestep
-                new_x = x_tile
+                new_x = x_tile_right - PLAYER_WIDTH
                 self.x_speed = 0
 
         elif self.x_speed < 0:
@@ -69,11 +71,14 @@ class Player(object):
         if self.y_speed > 0:
             # Falling down, check the tile below the player on the new x and y
             # I use the new x here because it has already been validated and corrected above
-            can_move_down = self.can_move_to_relative_tile_y(2, x=new_x, y=new_y)
+            can_move_down = self.can_move_to_relative_tile_y(0, x=new_x, y=new_y + PLAYER_HEIGHT)
+
+            # Compute the tile index of the tile containing the bottom side of the player
+            y_tile_bottom = ((new_y + PLAYER_HEIGHT) // TILE_SIZE_IN_PIXELS)*TILE_SIZE_IN_PIXELS
             if not can_move_down:
                 # Reset jump
                 self.can_jump = True
-                new_y = y_tile
+                new_y = y_tile_bottom - PLAYER_HEIGHT
                 if self.y_speed < 1:
                     self.y_speed = 0
                 else:
@@ -166,11 +171,11 @@ class Player(object):
 
         tile_x, tile_y = x // TILE_SIZE_IN_PIXELS, y // TILE_SIZE_IN_PIXELS
 
-        # If we're exactly on a tile border, check 2 neighbouring tiles, else check 3
-        if y % TILE_SIZE_IN_PIXELS == 0:
-            y_range = 2
-        else:
-            y_range = 3
+        # Compute the number of tiles that the player spans over the x-axis
+        # The small offset is added to avoid one-off errors. I'm vewy sowwy UwU - Gewwyfwap
+        y_range = int((y + PLAYER_HEIGHT - 1e-5)//TILE_SIZE_IN_PIXELS - tile_y)
+        y_range += 1
+
 
         # Check the tiles on all checked delta y
         for dy in range(y_range):
@@ -197,10 +202,10 @@ class Player(object):
 
         tile_x, tile_y = x // TILE_SIZE_IN_PIXELS, y // TILE_SIZE_IN_PIXELS
 
-        if x % TILE_SIZE_IN_PIXELS == 0:
-            x_range = 1
-        else:
-            x_range = 2
+        # Compute the number of tiles that the player spans over the x-axis
+        # The small offset is added to avoid one-off errors. I'm vewy sowwy UwU - Gewwyfwap
+        x_range = int((x + PLAYER_WIDTH - 1e-5)//TILE_SIZE_IN_PIXELS - tile_x)
+        x_range += 1
 
         for dx in range(x_range):
             tile = self.world.get_tile_at_indices(int(tile_x + dx), int(tile_y + dy))
