@@ -13,12 +13,12 @@ class Game(object):
     # todo: fix circular dependency and put in constants.py
     METEOR_SPAWN_RATE = 10
 
-    def __init__(self, width, height):
+    def __init__(self, width, height, memes_enabled):
         self.world = World(width, height)
 
         # Iets wat niet een blokje of player is is een entity:
         self.entities = []
-        self.player = Player(self.world, 10, 20)
+        self.player = Player(self.world, 10, 20, memes_enabled)
 
     def draw(self, surface):
 
