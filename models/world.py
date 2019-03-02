@@ -1,24 +1,24 @@
-import random
-
 from models.tiles.dirt_tile import Dirt
 from models.tiles.air_tile import Air
 from models.tiles.stone_tile import Stone
+from constants import TILE_SIZE_IN_PIXELS
 from models.tiles.jeltisium_tile import Jeltisnium
 from models.tiles.leninium_tile import Leninium
 from models.tiles.marxinium_tile import Marxinium
 from models.tiles.nokia_phonium_tile import NokiaPhonium
 from models.tiles.half_liter_klokkium_tile import HalfLiterKlokkium
+from constants import TILE_SIZE_IN_PIXELS, SCREEN_HEIGHT
 import random
 import bisect
-import collections
-
+import math
 
 # These values are from above
 DIRT_START = 20
-STONE_START = 40
+STONE_START = 35
 RESOURCE_START = 50
 
-RESOURCE_CHANCE = 0.15
+# Cap where the sigmoid function can decide the chance
+RESOURCE_CHANCE_CAP = 0.25
 
 # ratio peaks when resource is most common
 resource_ratio_peaks = [None] * 5
@@ -29,7 +29,6 @@ resource_ratio_peaks[3] = [NokiaPhonium, 0.50]
 resource_ratio_peaks[4] = [HalfLiterKlokkium, 0.90]
 
 # to avoid magic numbers
-RATIO_MIN = 0
 RATIO_MAX = 1
 
 
@@ -45,6 +44,12 @@ class World(object):
         self.height = height
 
     def gen_world(self, width, height):
+        """
+        Generate the world with some beautiful generation code
+        :param width: width of the world
+        :param height: height of the world
+        :return: the generated world
+        """
         world_matrix = []
         for x in range(width):
             column = []
@@ -61,27 +66,47 @@ class World(object):
                 elif (y > DIRT_START) and (y <= STONE_START):
                     column.append(Dirt(self, x, y, False))
                     continue
-                # Are we below where the stone starts?
+                # Are we below where the stone starts and above where the resources start?
                 elif (y > STONE_START) and (y <= RESOURCE_START):
-                    stone_chance = y/height  # TODO: Sigmoid that shit
+                    # Stone chance from sigmoid function
+                    stone_chance = self.sigmoid(10 * (y / height) - 5)
                     if random.uniform(0, 1) > stone_chance:
                         column.append(Dirt(self, x, y, False))
                     else:
                         column.append(Stone(self, x, y))
                     continue
+                # Are we below where the resources start?
                 elif y > RESOURCE_START:
-                    if random.uniform(0, 1) < RESOURCE_CHANCE:
+                    # Resource chance is from sigmoid function
+                    resource_chance = self.sigmoid(10 * (y / height) - 7)
+                    # To prevent suddenly everything being resources we cap where the sigmoid has influence
+                    if resource_chance > RESOURCE_CHANCE_CAP:
+                        # Here the resource chance becomes linear growing slowly
+                        resource_chance = RESOURCE_CHANCE_CAP + (y / (height * 10))
+                    if random.uniform(0, 1) < resource_chance:
+                        # Use a separate function to decide the resource
                         column.append(self.decide_resource(x, y, height))
                         continue
-                    stone_chance = y / height  # TODO: Sigmoid that shit
+                    # If we don't spawn a resource, just spawn stone using sigmoid to decide the chance
+                    stone_chance = self.sigmoid(10 * (y / height) - 5)
                     if random.uniform(0, 1) > stone_chance:
                         column.append(Dirt(self, x, y, False))
                     else:
                         column.append(Stone(self, x, y))
                     continue
-
             world_matrix.append(column)
         return world_matrix
+
+    def get_tile_at_indices(self, tile_x, tile_y):
+        if tile_x < 0 or tile_y < 0:
+            return None
+        try:
+            return self.tile_matrix[tile_x][tile_y]
+        except IndexError:
+            return None
+
+    def get_tile_at(self, x, y):
+        return self.get_tile_at_indices(x//TILE_SIZE_IN_PIXELS, y//TILE_SIZE_IN_PIXELS)
 
     # hahaha lelijke functie dit eks dee ik wil dood
     def decide_resource(self, x, y, height):
@@ -113,6 +138,11 @@ class World(object):
         return result(self, x, y)
 
     def cdf(self, weights):
+        """
+        Function used for deciding which resource to spawn, don't ask me how it works
+        :param weights: Array of weights, summing to 1
+        :return: some result????
+        """
         total = sum(weights)
         result = []
         cumsum = 0
@@ -122,6 +152,12 @@ class World(object):
         return result
 
     def choice(self, population, weights):
+        """
+        Making a choice from a population and array of weights
+        :param population: array of choices
+        :param weights: array of weights corresponding to population summing to 1
+        :return: the decided unit from population
+        """
         assert len(population) == len(weights)
         cdf_vals = self.cdf(weights)
         x = random.random()
@@ -138,15 +174,22 @@ class World(object):
         # total_chance = sum(distances)
         # random.uniform(0, total_chance)
 
-
-
-
-
-
+    @staticmethod
+    def sigmoid(x):
+        """
+        Helper function for sigmoid
+        :param x: the x
+        :return: the result
+        """
+        return 1 / (1 + math.exp(-x))
 
     def draw(self, surface, camera_y):
+        # Calculate bounds based on camera y to reduce lag drastically
+        min_y = max(0, camera_y//TILE_SIZE_IN_PIXELS - 1)
+        max_y = min(self.height, (camera_y + SCREEN_HEIGHT)//TILE_SIZE_IN_PIXELS + 1)
+
         for x in range(self.width):
-            for y in range(self.height):
+            for y in range(min_y, max_y):
                 self.tile_matrix[x][y].draw(surface, camera_y)
 
     def __repr__(self):
