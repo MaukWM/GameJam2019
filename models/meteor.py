@@ -40,17 +40,17 @@ class Meteor(object):
        self.y += self.delta_y
 
     # draw this meteor at the position in the next frame
-    def draw(self, surface, cameray_y):
-        to_draw_y = self.y - cameray_y
+    def draw(self, surface, camera_y):
+        to_draw_y = self.y - camera_y
         to_draw_x= self.x
         surface.blit(self.SPRITE, (to_draw_x, to_draw_y))
 
-    def is_colliding(self, DIRT_START, TILE_SIZE, game_tiles):
+    def is_colliding(self, TILE_SIZE, game_tiles):
         try:
-            if type(game_tiles[int(self.y / TILE_SIZE)][int(self.x / TILE_SIZE)]) != models.tiles.air_tile.Air:
-                # The x,y-position of this meteor contains a non-air tile, collision
-                return True
-            return False
+            return game_tiles[math.floor(self.x / TILE_SIZE)][math.floor(self.y / TILE_SIZE)].is_solid() or \
+                   game_tiles[math.floor(self.x / TILE_SIZE)][math.ceil(self.y / TILE_SIZE)].is_solid() or \
+                   game_tiles[math.ceil(self.x / TILE_SIZE)][math.floor(self.y / TILE_SIZE)].is_solid() or \
+                   game_tiles[math.ceil(self.x / TILE_SIZE)][math.ceil(self.y / TILE_SIZE)].is_solid()
         except IndexError:
             raise NotOnScreenError()
 

@@ -2,6 +2,7 @@ from models.player import Player
 from models.world import World
 from constants import TILE_SIZE_IN_PIXELS, SCREEN_WIDTH
 from models.meteor import Meteor, NotOnScreenError
+from models.explosion import Explosion
 import random
 import models.world
 import models.tiles.air_tile
@@ -10,7 +11,7 @@ import models.tiles.air_tile
 class Game(object):
 
     # todo: fix circular dependency and put in constants.py
-    METEOR_SPAWN_RATE = 10
+    METEOR_SPAWN_RATE = 100
 
     def __init__(self, width, height):
         self.world = World(width, height)
@@ -34,10 +35,14 @@ class Game(object):
                 if entity.y >= models.world.DIRT_START * TILE_SIZE_IN_PIXELS:
                     # this meteor is below DIRT_START, Check collision
                     try:
-                        if entity.is_colliding(models.world.DIRT_START, TILE_SIZE_IN_PIXELS, self.world.tile_matrix):
+                        if entity.is_colliding(TILE_SIZE_IN_PIXELS, self.world.tile_matrix):
+                            self.entities.append(Explosion(entity.x, entity.y))
                             self.entities.remove(entity)
                     except NotOnScreenError:
                         self.entities.remove(entity)
+            if type(entity) is Explosion:
+                if entity.frame_counter >= 48:
+                    self.entities.remove(entity)
 
         # time to maybe spawn a meteor
         if random.randint(0, 1000) > 1000 - self.METEOR_SPAWN_RATE:
