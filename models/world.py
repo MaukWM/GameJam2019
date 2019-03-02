@@ -48,10 +48,10 @@ class World(object):
         self.tile_matrix[5][21] = Air(self, 5, 21)
         self.tile_matrix[5][22] = Air(self, 5, 22)
         self.tile_matrix[5][23] = Air(self, 5, 23)
-        self.tile_matrix[6][20] = Air(self, 5, 20)
-        self.tile_matrix[6][21] = Air(self, 5, 21)
-        self.tile_matrix[6][22] = Air(self, 5, 22)
-        self.tile_matrix[6][23] = Air(self, 5, 23)
+        self.tile_matrix[6][20] = Air(self, 6, 20)
+        self.tile_matrix[6][21] = Air(self, 6, 21)
+        self.tile_matrix[6][22] = Air(self, 6, 22)
+        self.tile_matrix[6][23] = Air(self, 6, 23)
 
     def gen_world(self, width, height):
         """

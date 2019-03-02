@@ -6,9 +6,11 @@ from constants import TILE_SIZE_IN_PIXELS, FRAME_RATE
 from models.items.inventory import Inventory
 from constants import TILE_SIZE_IN_PIXELS, FRAME_RATE, SCREEN_HEIGHT
 
-PLAYER_WIDTH, PLAYER_HEIGHT = TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS*2
-PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS*2))
+PLAYER_WIDTH, PLAYER_HEIGHT = TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2
+PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player.png'),
+                                       (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2))
 PLAYER_DAMAGE = 0.05
+
 
 class Player(object):
 
@@ -22,6 +24,9 @@ class Player(object):
         self.can_jump = True
         self.selected_tile = None
         self.inventory = Inventory()
+
+        # TODO: Remove
+        self.first_100_tiles = None
 
     def step(self):
 
@@ -88,6 +93,15 @@ class Player(object):
                 TILE_SIZE_IN_PIXELS,
             )
             pygame.draw.rect(surface, (255, 0, 0), rect, 3)
+        # for tile in self.first_100_tiles:
+        #     if tile is not None:
+        #         rect = (
+        #             tile.x * TILE_SIZE_IN_PIXELS,
+        #             tile.y * TILE_SIZE_IN_PIXELS - camera_y,
+        #             TILE_SIZE_IN_PIXELS,
+        #             TILE_SIZE_IN_PIXELS,
+        #         )
+        #         pygame.draw.rect(surface, (255, 0, 0), rect, 3)
 
     def can_move_to_relative_tile_x(self, dx, x=None, y=None):
         """
@@ -152,71 +166,30 @@ class Player(object):
             self.can_jump = False
             self.y_speed -= 6.0
 
-    def find_selected_tile(self, mouse_x, mouse_y, select_solids=True):
-        dx = mouse_x - self.x
-        dy = mouse_y - SCREEN_HEIGHT//2 - TILE_SIZE_IN_PIXELS
+    def find_selected_tile(self, mouse_x, mouse_y):
+        """
+        Finds the selected tile (with the mouse) and returns it if it's close enough
+        :param mouse_x: The x-position of the mouse on the screen
+        :param mouse_y: The y-position of the mouse on the screen
+        :return: A tile if there's a close enough tile there, otherwise None
+        """
+        camera_y = int(self.y - SCREEN_HEIGHT // 2)
+        x, y = mouse_x, mouse_y + camera_y
+        tile_x, tile_y = x//TILE_SIZE_IN_PIXELS, y//TILE_SIZE_IN_PIXELS
 
-        distance_to_mouse = (dx**2 + dy**2)**0.5
+        ptile_x_left, ptile_y_top = self.x//TILE_SIZE_IN_PIXELS, self.y//TILE_SIZE_IN_PIXELS
+        ptile_x_right, ptile_y_bot = (self.x + PLAYER_WIDTH-0.01)//TILE_SIZE_IN_PIXELS, (self.y + PLAYER_HEIGHT - 0.01)//TILE_SIZE_IN_PIXELS
 
-        dx_norm = dx/distance_to_mouse
-        dy_norm = dy/distance_to_mouse
+        dist_x_1 = abs(ptile_x_left - tile_x)
+        dist_x_2 = abs(ptile_x_right - tile_x)
+        dist_y_1 = abs(ptile_y_bot - tile_y)
+        dist_y_2 = abs(ptile_y_top - tile_y)
 
-        dx_sign = 1 if dx_norm >= 0 else -1
-        dy_sign = 1 if dy_norm >= 0 else -1
-
-        dx_abs, dy_abs = dx_norm/dx_sign, dy_norm/dy_sign
-        angle_top_right = math.atan2(dx_abs, dy_abs)
-
-        # The next code will determine what block we aim at, with angles normalized to top-right.
-        # This can be rotated later if we're not looking to the top-left in mathematical x/y space
-
-        looking_at_top = False
-        looking_at_right = False
-        looking_at_diagonal = False
-
-        if angle_top_right < math.pi/4:
-            looking_at_top = True
+        if (min(dist_x_1, dist_x_2) == 1 and max(dist_y_1, dist_y_2) <= 2) or \
+                (min(dist_y_1, dist_y_2) == 1 and max(dist_x_1, dist_x_2) <= 1):
+            return self.world.get_tile_at_indices(tile_x, tile_y)
         else:
-            looking_at_right = True
-
-        if 2/3 > dx_abs > 1/3:
-            looking_at_diagonal = True
-
-        tile_x, tile_y = self.x // TILE_SIZE_IN_PIXELS, self.y // TILE_SIZE_IN_PIXELS
-        if self.x % TILE_SIZE_IN_PIXELS != 0 and dx_sign == 1:
-            tile_x += 1
-
-        if dy_sign == 1:
-            tile_y += 1
-
-        if looking_at_top:
-            tile_y += dy_sign
-        else:
-            tile_x += dx_sign
-
-        tile = self.world.get_tile_at_indices(tile_x, tile_y)
-        if tile is None:
             return None
-
-        if (tile.is_solid() and select_solids) or (not tile.is_solid() and not select_solids):
-            return tile
-
-        if looking_at_diagonal:
-            if looking_at_top:
-                tile_x += dx_sign
-            else:
-                tile_y += dy_sign
-
-            tile = self.world.get_tile_at_indices(tile_x, tile_y)
-            if tile is None:
-                return None
-
-            if (tile.is_solid() and select_solids) or (not tile.is_solid() and not select_solids):
-                return tile
-            else:
-                return None
-        return None
-
 
     def set_selected_tile(self, tile):
         self.selected_tile = tile
@@ -226,7 +199,7 @@ class Player(object):
         self.set_selected_tile(self.find_selected_tile(mouse_x, mouse_y))
 
     def mine(self):
-        if self.selected_tile is not None:
+        if self.selected_tile is not None and self.selected_tile.is_solid():
             destroyed = self.selected_tile.damage(PLAYER_DAMAGE)
             if destroyed:
                 self.world.destroy_tile(self.selected_tile)
