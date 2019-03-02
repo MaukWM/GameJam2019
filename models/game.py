@@ -28,9 +28,6 @@ class Game(object):
         # Iets wat niet een blokje of player is is een entity:
         self.entities = []
         self.player = Player(self, 10, 20, memes_enabled)
-        # Uncomment to test item drops :D
-        self.entities.append(DroppedItem(self, ItemType.HALF_LITER_KLOKKIUM, 400, 20))
-
     def draw(self, surface):
 
         # The camera follows the player:
