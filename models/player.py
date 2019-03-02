@@ -9,6 +9,7 @@ from models.meteor import Meteor
 from models.explosion import Explosion
 from models.healthbar import HealthBar
 from models.world import DIRT_START
+from models.items.item_types import PATHS  # TODO: Add meme path
 
 PLAYER_WIDTH, PLAYER_HEIGHT = 28, 60
 PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player.png'),
@@ -254,4 +255,11 @@ class Player(object):
         if self.selected_tile is not None and self.selected_tile.is_solid():
             destroyed = self.selected_tile.damage(PLAYER_DAMAGE)
             if destroyed:
+                self.drop_item(self.selected_tile)
                 self.world.destroy_tile(self.selected_tile)
+
+    def drop_item(self, tile):
+        x_tile, y_tile = tile.x * TILE_SIZE_IN_PIXELS, tile.y * TILE_SIZE_IN_PIXELS
+        self.game.entities.append(DroppedItem(self.game, tile.item_type, x_tile, y_tile, meme_mode=self.game.memes_enabled))
+
+
