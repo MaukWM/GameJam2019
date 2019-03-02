@@ -8,6 +8,7 @@ PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player
 
 
 class Player(object):
+
     def __init__(self, world, x, y):
         self.world = world
         self.x = x
