@@ -13,7 +13,7 @@ from models.items.item_types import ItemType
 class Game(object):
 
     # todo: fix circular dependency and put in constants.py
-    METEOR_SPAWN_RATE = 20
+    METEOR_SPAWN_RATE = 0
 
     def __init__(self, width, height, memes_enabled):
         self.world = World(width, height)
@@ -58,6 +58,6 @@ class Game(object):
 
         # time to maybe spawn a meteor
         if random.randint(0, 1000) > 1000 - self.METEOR_SPAWN_RATE:
-            self.entities.append(Meteor(random.randint(0, SCREEN_WIDTH), random.randint(50, 500) / 100))
+            self.entities.append(Meteor(random.randint(0, SCREEN_WIDTH), random.randint(50, 500) / 100, self.world))
 
         self.player.step()

@@ -20,8 +20,6 @@ class Dirt(Tile):
             surface.blit(DIRT_SPRITE_WITH_GRASS, (x, y))
         else:
             surface.blit(DIRT_SPRITE, (x, y))
-        if self.isfalling:
-            pygame.draw.rect(surface, (246, 1, 1), (x, y, TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS), 2)
 
     def is_grass(self):
         return self.is_grass

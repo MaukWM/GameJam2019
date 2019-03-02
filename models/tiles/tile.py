@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-FALLING_THRESHOLD = 0.5
+FALLING_THRESHOLD = 0.25
+STEPS_TO_FALL = 2
 
 class Tile(ABC):
     def __init__(self, world, x, y):
@@ -10,6 +11,10 @@ class Tile(ABC):
         self.isfalling = False
         self.strength = self.get_initial_strength()
         self.health = 1
+        self.fallcounter = 0
+
+    def can_support(self):
+        return True
 
     @abstractmethod
     def draw(self, surface, camera_y):
@@ -32,7 +37,7 @@ class Tile(ABC):
     def damage(self, amount):
         if self.get_strength() == 0.0:
             return False
-        self.health -= amount // self.get_resistance()
+        self.health -= amount / self.get_resistance()
         if self.health <= 0:
             return True             # it breaks
         else:
@@ -54,5 +59,26 @@ class Tile(ABC):
         self.stability = 0
 
     def check_stability(self):
+        if self.isfalling:
+            return False
         if self.stability < FALLING_THRESHOLD:
             self.isfalling = True
+            return True
+        return False
+
+    def step(self):
+        if self.isfalling:
+            if self.fallcounter < STEPS_TO_FALL:
+                self.fallcounter += 1
+                return True
+            else:
+                self.fallcounter = 0
+                if not self.world.get_tile_at_indices(self.x, self.y + 1).can_support():
+                    self.world.set_tile_at_indices(self.x, self.y, self.world.get_tile_at_indices(self.x, self.y + 1))
+                    self.y += 1
+                    self.world.set_tile_at_indices(self.x, self.y, self)
+                    return True
+                else:
+                    self.isfalling = False
+                    return False
+
