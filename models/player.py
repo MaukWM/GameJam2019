@@ -12,8 +12,9 @@ PLAYER_DAMAGE = 0.05
 
 class Player(object):
 
-    def __init__(self, world, x, y):
-        self.world = world
+    def __init__(self, game, x, y):
+        self.game = game
+        self.world = game.world
         self.x = x
         self.y = y
         self.x_speed = 0
@@ -215,6 +216,7 @@ class Player(object):
             else:
                 return None
         return None
+
 
     def set_selected_tile(self, tile):
         self.selected_tile = tile

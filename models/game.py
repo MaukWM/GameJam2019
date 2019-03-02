@@ -18,7 +18,7 @@ class Game(object):
 
         # Iets wat niet een blokje of player is is een entity:
         self.entities = []
-        self.player = Player(self.world, 10, 20)
+        self.player = Player(self, 10, 20)
 
     def draw(self, surface):
 
