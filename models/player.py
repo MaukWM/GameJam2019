@@ -7,6 +7,7 @@ from models.items.inventory import Inventory
 from constants import TILE_SIZE_IN_PIXELS, FRAME_RATE, SCREEN_HEIGHT
 from models.items.dropped_item import DroppedItem
 from models.items.dropped_item import DROPPED_ITEM_HEIGHT, DROPPED_ITEM_WIDTH
+from models.world import DIRT_START
 
 PLAYER_WIDTH, PLAYER_HEIGHT = TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2
 PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player.png'),
@@ -23,6 +24,7 @@ class Player(object):
         self.y = y
         self.x_speed = 0
         self.y_speed = 0
+        self.highest_reached_y = DIRT_START - 2  # -2 because then it works properly
         self.can_jump = True
         self.selected_tile = None
         self.inventory = Inventory(memes_enabled)
@@ -81,6 +83,11 @@ class Player(object):
                 self.y_speed = 0
         self.x, self.y = new_x, new_y
 
+        if new_tile_y > self.highest_reached_y:
+            difference = new_tile_y - self.highest_reached_y
+            self.highest_reached_y = new_tile_y
+            self.game.add_depth_score(difference)
+
         self.check_item_collisions()
 
         # Realistic friction ;P
@@ -110,6 +117,7 @@ class Player(object):
 
     def consume_item(self, entity: DroppedItem):
         self.game.player.inventory.increment_item_amount(entity.item_type)
+        self.game.add_resource_score(entity.item_type)
         self.game.entities.remove(entity)
 
     def draw(self, surface, camera_y):
