@@ -8,13 +8,17 @@ from models.items.dropped_item import DROPPED_ITEM_HEIGHT, DROPPED_ITEM_WIDTH
 from models.meteor import Meteor
 from models.explosion import Explosion
 from models.healthbar import HealthBar
+from models.tiles.air_tile import Air
+from models.tiles.dirt_tile import Dirt
+from models.tiles.stone_tile import Stone
 from models.world import DIRT_START
-from models.items.item_types import PATHS  # TODO: Add meme path
+from models.items.item_types import PATHS, ItemType  # TODO: Add meme path
 
 PLAYER_WIDTH, PLAYER_HEIGHT = 28, 60
 PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player.png'),
                                        (PLAYER_WIDTH, PLAYER_HEIGHT))
 PLAYER_DAMAGE = 0.05
+DIFFERENT_ITEM_NUMBER = 7
 
 
 class Player(object):
@@ -31,6 +35,7 @@ class Player(object):
         self.selected_tile = None
         self.inventory = Inventory(memes_enabled)
         self.health_bar = HealthBar()
+        self.selected_inventory_item = 0
 
     def step(self):
 
@@ -145,7 +150,7 @@ class Player(object):
 
     def draw(self, surface, camera_y):
         surface.blit(PLAYER_SPRITE, (self.x, self.y - camera_y))
-        self.inventory.draw(surface)
+        self.inventory.draw(surface, self.selected_inventory_item)
         self.health_bar.draw(surface)
         if self.selected_tile is not None:
             rect = (
@@ -262,4 +267,36 @@ class Player(object):
         x_tile, y_tile = tile.x * TILE_SIZE_IN_PIXELS, tile.y * TILE_SIZE_IN_PIXELS
         self.game.entities.append(DroppedItem(self.game, tile.item_type, x_tile, y_tile, meme_mode=self.game.memes_enabled))
 
+    #kan gebruikt worden als je een scrollwheel gebruikt
+    def increment_item_selected(self, bool):
+        if bool:
+            self.change_item_selected(self.selected_inventory_item + 1)
+        else:
+            self.change_item_selected(self.selected_inventory_item + 1)
 
+    def change_item_selected(self, number):
+        self.selected_inventory_item = number % DIFFERENT_ITEM_NUMBER
+
+    map_inventory_to_placeable = {0:True,
+                                 1:True,
+                                 2:False,
+                                 3:False,
+                                 4:False,
+                                 5:False,
+                                 6:False,
+                                 }
+
+    map_inventory_to_consturcter = {0:lambda x,y,world : Dirt(world,x,y,False),
+                                    1:lambda x,y,world : Stone(world,x,y),
+                                  }
+
+    def use_inventory_item(self):
+        if self.map_inventory_to_placeable[self.selected_inventory_item]:
+            if isinstance(self.selected_tile, Air):
+                if self.inventory.inventory[ItemType(self.selected_inventory_item + 1)].amount > 0:
+                    self.inventory.inventory[ItemType(self.selected_inventory_item + 1)].amount -= 1
+                    x = self.selected_tile.x
+                    y = self.selected_tile.y
+                    block = self.map_inventory_to_consturcter[self.selected_inventory_item](x, y, self.world)
+                    if block is not None:
+                        self.world.tile_matrix[x][y] = block
