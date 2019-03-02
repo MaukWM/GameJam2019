@@ -59,7 +59,7 @@ class Player(object):
                 new_y = y_tile
                 self.y_speed = 0
         elif self.y_speed < 0:
-            # Moving up
+            # Moving up, same logic as moving left
             can_move_up = self.can_move_to_relative_tile_y(0, x=new_x, y=new_y)
             if not can_move_up:
                 new_y = y_tile + TILE_SIZE_IN_PIXELS
@@ -73,6 +73,13 @@ class Player(object):
         surface.blit(PLAYER_SPRITE, (self.x, self.y - camera_y))
 
     def can_move_to_relative_tile_x(self, dx, x=None, y=None):
+        """
+        Checks whether the player can actually move dx tiles from the given x and y
+        :param dx: Delta x. The difference in x position in tile coordinates
+        :param x: If filled in this parameter overrides the default x = self.x
+        :param y: If filled in this parameter overrides the default y = self.y
+        :return: Whether the player can stand at this dx without colliding
+        """
         if x is None:
             x = self.x
 
@@ -81,21 +88,29 @@ class Player(object):
 
         tile_x, tile_y = x // TILE_SIZE_IN_PIXELS, y // TILE_SIZE_IN_PIXELS
 
+        # If we're exactly on a tile border, check 2 neighbouring tiles, else check 3
         if y % TILE_SIZE_IN_PIXELS == 0:
             y_range = 2
         else:
             y_range = 3
 
-        print(y_range, )
-
+        # Check the tiles on all checked delta y
         for dy in range(y_range):
             tile = self.world.get_tile_at_indices(int(tile_x + dx), int(tile_y + dy))
-            print(tile)
             if tile is None or tile.is_solid():
+                # We cannot pass through the map borders or solid blocks
                 return False
+        # If we didn't encounter anything holding us back, we can move to this dx
         return True
 
     def can_move_to_relative_tile_y(self, dy, x=None, y=None):
+        """
+        Checks whether the player can actually move dy tiles from the given x and y
+        :param dy: Delta y. The difference in y position in tile coordinates
+        :param x: If filled in this parameter overrides the default x = self.x
+        :param y: If filled in this parameter overrides the default y = self.y
+        :return: Whether the player can stand at this dy without colliding
+        """
         if x is None:
             x = self.x
 

@@ -12,7 +12,14 @@ class Game(object):
         self.player = Player(self.world, 10, 20)
 
     def draw(self, surface):
-        camera_y = int((self.player.y + -SCREEN_HEIGHT//2)/TILE_SIZE_IN_PIXELS)*TILE_SIZE_IN_PIXELS
+
+        # The camera follows the player:
+
+        # Uncomment this if you want the camera to move on the grid
+        # camera_y = int((self.player.y + -SCREEN_HEIGHT//2)/TILE_SIZE_IN_PIXELS)*TILE_SIZE_IN_PIXELS
+
+        # Uncomment this if you want the camera to follow the player without regard for the grid
+        camera_y = int(self.player.y + -SCREEN_HEIGHT // 2)
 
         self.world.draw(surface, camera_y)
         self.player.draw(surface, camera_y)
