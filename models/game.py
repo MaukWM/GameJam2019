@@ -1,10 +1,11 @@
 from models.player import Player
 from models.world import World
 from constants import TILE_SIZE_IN_PIXELS, SCREEN_WIDTH
-from models.meteor import Meteor
+from models.meteor import Meteor, NotOnScreenError
 import random
 import models.world
 import models.tiles.air_tile
+
 
 class Game(object):
 
@@ -32,7 +33,10 @@ class Game(object):
             if type(entity) is Meteor:
                 if entity.y >= models.world.DIRT_START * TILE_SIZE_IN_PIXELS:
                     # this meteor is below DIRT_START, Check collision
-                    if entity.is_colliding(models.world.DIRT_START, TILE_SIZE_IN_PIXELS, self.world.tile_matrix):
+                    try:
+                        if entity.is_colliding(models.world.DIRT_START, TILE_SIZE_IN_PIXELS, self.world.tile_matrix):
+                            self.entities.remove(entity)
+                    except NotOnScreenError:
                         self.entities.remove(entity)
 
         # time to maybe spawn a meteor
