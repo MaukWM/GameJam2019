@@ -10,7 +10,7 @@ INVENTORY_Y = 20
 
 class Inventory(object):
 
-    def __init__(self, memes_enabled):
+    def __init__(self, memes_enabled=False):
         self.inventory = self.init_inventory()
         self.memes_enabled = memes_enabled
 
