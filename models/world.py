@@ -55,6 +55,18 @@ class World(object):
         world_matrix[5][20] = Air(self, 5, 20)
         world_matrix[6][20] = Air(self, 6, 20)
         world_matrix[6][21] = Air(self, 6, 21)
+        world_matrix[7][20] = Air(self, 7, 20)
+        world_matrix[7][21] = Air(self, 7, 21)
+        world_matrix[7][22] = Air(self, 7, 22)
+        world_matrix[8][21] = Air(self, 8, 21)
+        world_matrix[8][22] = Air(self, 8, 22)
+        world_matrix[8][23] = Air(self, 8, 23)
+        world_matrix[9][21] = Air(self, 9, 21)
+        world_matrix[9][22] = Air(self, 9, 22)
+        world_matrix[9][23] = Air(self, 9, 23)
+        world_matrix[10][21] = Air(self, 10, 21)
+        world_matrix[10][22] = Air(self, 10, 22)
+        world_matrix[10][23] = Air(self, 10, 23)
         return world_matrix
 
     def get_tile_at_indices(self, tile_x, tile_y):
