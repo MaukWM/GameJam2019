@@ -7,9 +7,9 @@ import random
 
 class Meteor(object):
 
-    sprites = [
-        pygame.image.load('assets/graphics/meteors/basestation.png'),
-        pygame.image.load('assets/graphics/meteors/stone1.png')
+    sizes_and_sprites = [
+        (64, 64, pygame.image.load('assets/graphics/meteors/basestation.png')),
+        (32, 32, pygame.image.load('assets/graphics/meteors/stone1.png'))
     ]
 
     # the angle of the meteor in radians
@@ -27,6 +27,11 @@ class Meteor(object):
         self.y = 0
         self.size = size
         self.angle = (random.randint(0, 14) - 7) / 10
+        sizes_and_sprite = self.sizes_and_sprites[random.randint(0, len(self.sizes_and_sprites) - 1)]
+
+        self.width = sizes_and_sprite[0]
+        self.height = sizes_and_sprite[1]
+        self.SPRITE = sizes_and_sprite[2]
         self.SPRITE = self.sprites[random.randint(0, len(self.sprites) - 1)]
         self.world = world
 

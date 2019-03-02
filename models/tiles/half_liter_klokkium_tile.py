@@ -1,6 +1,7 @@
 from models.tiles.tile import Tile
 from constants import TILE_SIZE_IN_PIXELS
 import pygame
+from models.items.item_types import ItemType
 
 HALF_LITER_KLOKKIUM_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/halfliterklokkium.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
 STONE_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/stone.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
@@ -9,6 +10,11 @@ STONE_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/stone.p
 class HalfLiterKlokkium(Tile):
 
     def get_resistance(self):
+    def __init__(self, world, x, y):
+        super().__init__(world, x, y)
+        self.item_type = ItemType.HALF_LITER_KLOKKIUM
+
+    def get_strength(self):
         return 100.0
 
     def is_solid(self):

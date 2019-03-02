@@ -10,6 +10,14 @@ class ItemType(Enum):
     NOKIA_PHONIUM = 6
     HALF_LITER_KLOKKIUM = 7
 
+SCORES = {}
+SCORES[ItemType.DIRT] = 0
+SCORES[ItemType.STONE] = 0
+SCORES[ItemType.JELTSIUM] = 250
+SCORES[ItemType.MARXINIUM] = 750
+SCORES[ItemType.LENINIUM] = 2500
+SCORES[ItemType.NOKIA_PHONIUM] = 10000
+SCORES[ItemType.HALF_LITER_KLOKKIUM] = 50000
 
 PATHS = {}
 PATHS[ItemType.DIRT] = {"location": "assets/graphics/items/dirt_item.png"}
