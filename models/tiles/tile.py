@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-FALLING_THRESHOLD = 0.1
+FALLING_THRESHOLD = 0.5
 
 class Tile(ABC):
     def __init__(self, world, x, y):
