@@ -22,8 +22,8 @@ class Tile(ABC):
         pass
 
     def damage(self, amount):
-        if self.get_strength():
-            pass
+        if self.get_strength() == 0.0:
+            return False
 
         self.stability -= amount / self.get_strength()
         if self.stability <= 0:

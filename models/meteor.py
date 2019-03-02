@@ -54,6 +54,28 @@ class Meteor(object):
         except IndexError:
             raise NotOnScreenError()
 
+    def is_colliding(self, TILE_SIZE, game_tiles):
+        grid_x = int(self.x / TILE_SIZE)
+        grid_y = int(self.y / TILE_SIZE)
+        width = len(game_tiles)
+        height = len(game_tiles[0])
+        if grid_y >= 0 and grid_y < height and grid_x >= 0 and grid_x < width:
+            if type(game_tiles[grid_x][grid_y]) != models.tiles.air_tile.Air:
+                range_size = int(math.ceil(self.size))
+                # The x,y-position of this meteor contains a non-air tile, collision
+                for delta_x in range(-range_size, range_size):
+                    for delta_y in range(-range_size, range_size):
+                        distance_factor = (delta_x**2 + delta_y**2) / self.size**2
+                        if distance_factor < 1:
+                            damage = 0.5 - distance_factor/(self.size*0.5)
+                            effective_y = grid_y + delta_y
+                            effective_x = grid_x + delta_x
+                            if effective_y >= 0 and effective_y < height and effective_x >= 0 and effective_x < width:
+                                it_breaks = game_tiles[effective_x][effective_y].damage(damage)
+                                if it_breaks:
+                                    game_tiles[effective_x][effective_y] = models.tiles.air_tile.Air(self, grid_x + delta_x, grid_y + delta_y)
+                return True
+        return False
 
 class NotOnScreenError(Exception):
     pass
