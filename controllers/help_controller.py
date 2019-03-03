@@ -48,8 +48,13 @@ class HelpController(object):
     def update_state(self):
         self.window.fill((133, 133, 133))
 
-        self.window.blit(self.title_1_surface, (330, 10))
-        self.window.blit(self.title_2_surface, (380, 70))
+        self.window.blit(self.title_1_surface, (250, 10))
+        self.window.blit(self.title_2_surface, (250, 70))
+        self.window.blit(self.title_3_surface, (250, 130))
+        self.window.blit(self.title_4_surface, (250, 190))
+        self.window.blit(self.title_5_surface, (250, 250))
+        self.window.blit(self.title_6_surface, (250, 310))
+        self.window.blit(self.title_7_surface, (250, 370))
 
 
         pygame.draw.rect(self.window, (0, 0, 0), (self.MENU_ITEM_X, self.MENU_ITEM_START_Y, self.MENU_ITEM_WIDTH, self.MENU_ITEM_HEIGHT))
@@ -57,8 +62,13 @@ class HelpController(object):
 
     def setup(self):
         # draws the title
-        self.title_1_surface = self.title_font.render("METEOR DISASTER", False, (255, 255, 255))
-        self.title_2_surface = self.title_font.render("MINER DELUXE!", False, (255, 255, 255))
+        self.title_1_surface = self.title_font.render("use a,d or <-,-> to move left and right", False, (255, 255, 255))
+        self.title_2_surface = self.title_font.render("use w,^ or space to jump", False, (255, 255, 255))
+        self.title_3_surface = self.title_font.render("use left mouse to break blocks", False, (255, 255, 255))
+        self.title_4_surface = self.title_font.render("use right mouse to place blocks", False, (255, 255, 255))
+        self.title_5_surface = self.title_font.render("    with shift to place support beams", False, (255, 255, 255))
+        self.title_6_surface = self.title_font.render("use u to upgrade your pickaxe", False, (255, 255, 255))
+        self.title_7_surface = self.title_font.render("use e to eat", False, (255, 255, 255))
 
         # back
         self.start_text = self.title_font.render("BACK", False, (0, 255, 0))
