@@ -27,8 +27,6 @@ class Dirt(Tile):
                 surface.blit(DIRT_SPRITE, (x, y))
             else:
                 surface.blit(DIRT_BEAM_SPRITE, (x, y))
-        if not self.solid:
-            print(self.stability)
 
 
     def is_grass(self):
