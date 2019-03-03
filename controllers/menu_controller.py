@@ -1,7 +1,7 @@
 import pygame
 import sys
 import time
-from controllers import game_controller, help_controller
+from controllers import game_controller, help_controller, death_controller
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH, FRAME_RATE, DEV_MODE
 
 
@@ -42,6 +42,12 @@ class MenuController(object):
     MENU_ITEM_HELP_Y = 500
     MENU_ITEM_START_Y = 600
 
+    def run_game(self):
+        gc = game_controller.GameController(self.window, self.meme_mode, self.rows_updated_per_frame,
+                                            self.meteor_spawn_rate)
+        gc.run()
+        death_controller.DeathController(gc.game.score, self.window).run()
+
     def __init__(self):
         # setup stuff
         pygame.init()
@@ -50,7 +56,7 @@ class MenuController(object):
         self.font = pygame.font.SysFont("Arial", 20)
         self.title_font = pygame.font.SysFont("Arial", 60)
         if DEV_MODE:
-            game_controller.GameController(self.window, self.meme_mode, self.rows_updated_per_frame, self.meteor_spawn_rate).run()
+            self.run_game()
         self.setup()
 
     # Do all necessary setup
@@ -148,7 +154,7 @@ class MenuController(object):
             if self.MENU_ITEM_X <= x <= self.MENU_ITEM_X + self.MENU_ITEM_WIDTH:
                 # Start button
                 if self.MENU_ITEM_START_Y <= y <= self.MENU_ITEM_START_Y + self.MENU_ITEM_HEIGHT:
-                    game_controller.GameController(self.window, self.meme_mode, self.rows_updated_per_frame, self.meteor_spawn_rate).run()
+                    self.run_game()
                     self.setup()
                 # Help button
                 if self.MENU_ITEM_HELP_Y <= y <= self.MENU_ITEM_HELP_Y + self.MENU_ITEM_HEIGHT:
