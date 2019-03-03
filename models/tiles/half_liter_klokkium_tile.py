@@ -6,7 +6,8 @@ from models.items.item_types import ItemType
 HALF_LITER_KLOKKIUM_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/halfliterklokkium.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
 STONE_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/stone.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
 HALF_LITER_KLOKKIUM_BLOCK_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/halfliterklokkium_block.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
-HALF_LITER_KLOKKIUM_BEAM_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/halfliterklokkium_beam.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
+HALF_LITER_KLOKKIUM_BEAM_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/support_beams/halfliterklokkium.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
+AIR_UNDERGROUND_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/background.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
 
 
 class HalfLiterKlokkium(Tile):
@@ -34,4 +35,6 @@ class HalfLiterKlokkium(Tile):
             if self.solid:
                 surface.blit(HALF_LITER_KLOKKIUM_BLOCK_SPRITE, (x, y))
             else:
+                if self.y >= 20:
+                    surface.blit(AIR_UNDERGROUND_SPRITE, (x, y))
                 surface.blit(HALF_LITER_KLOKKIUM_BEAM_SPRITE, (x, y))

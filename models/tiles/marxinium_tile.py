@@ -6,7 +6,8 @@ from models.items.item_types import ItemType
 MARXINIUM_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/marxinium.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
 STONE_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/stone.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
 MARXINIUM_BLOCK_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/marxinium_block.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
-MARXINIUM_BEAM_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/marxinium_beam.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
+MARXINIUM_BEAM_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/support_beams/marxinium_block.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
+AIR_UNDERGROUND_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/background.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
 
 
 class Marxinium(Tile):
@@ -35,4 +36,6 @@ class Marxinium(Tile):
             if self.solid:
                 surface.blit(MARXINIUM_BLOCK_SPRITE, (x, y))
             else:
+                if self.y >= 20:
+                    surface.blit(AIR_UNDERGROUND_SPRITE, (x, y))
                 surface.blit(MARXINIUM_BEAM_SPRITE, (x, y))
