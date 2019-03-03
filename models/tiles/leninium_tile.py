@@ -17,8 +17,8 @@ class Leninium(Tile):
         self.ore_bool = ore_bool
         self.solid = solid
 
-    def get_strength(self):
-        return 1
+    def get_inittuial_strength(self):
+        return 0.6
 
     def get_resistance(self):
         return 20.0

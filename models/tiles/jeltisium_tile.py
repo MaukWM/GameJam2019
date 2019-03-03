@@ -11,6 +11,9 @@ JELTISIUM_BEAM_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphic
 
 class Jeltisnium(Tile):
 
+    def get_initial_strength(self):
+        return 0.45
+
     def get_resistance(self):
         return 5.0
 
@@ -19,9 +22,6 @@ class Jeltisnium(Tile):
         self.item_type = ItemType.JELTSIUM
         self.ore_bool = ore_bool
         self.solid = solid
-
-    def get_strength(self):
-        return 1
 
     def is_solid(self):
         return self.solid

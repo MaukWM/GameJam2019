@@ -19,8 +19,8 @@ class NokiaPhonium(Tile):
         self.ore_bool = ore_bool
         self.solid = solid
 
-    def get_strength(self):
-        return 50.0
+    def get_initial_strength(self):
+        return 0.6
 
     def is_solid(self):
         return self.solid

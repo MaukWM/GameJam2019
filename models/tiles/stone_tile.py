@@ -10,7 +10,7 @@ STONE_BEAM_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/st
 
 class Stone(Tile):
     def get_initial_strength(self):
-        return 0.7
+        return 0.35
 
     def get_resistance(self):
         return 10
@@ -20,8 +20,6 @@ class Stone(Tile):
         self.item_type = ItemType.STONE
         self.solid = solid
 
-    def get_strength(self):
-        return 10.0
 
     def is_solid(self):
         return self.solid
