@@ -45,9 +45,9 @@ PLAYER_LEGS_WALKING_FRAMES = [
 
 PICKAXE = pygame.image.load('assets/graphics/pickaxe.png')
 
-PLAYER_DAMAGE = 0.05
-
 DIFFERENT_ITEM_NUMBER = 8
+FALL_DAMAGE_THRESHOLD = 15
+FALL_DAMAGE_SCALING_FACTOR = 2.5
 
 
 class Player(object):
@@ -64,7 +64,7 @@ class Player(object):
         self.pickaxe_sprite = PICKAXE
         self.is_mining = False
         self.highest_reached_y = DIRT_START - 2  # -2 because then it works properly
-        self.can_jump = True
+        self.can_jump = False
         self.selected_tile = None
         self.inventory = Inventory(memes_enabled)
         self.health_bar = HealthBar()
@@ -119,9 +119,13 @@ class Player(object):
             # Compute the tile index of the tile containing the bottom side of the player
             y_tile_bottom = ((new_y + PLAYER_HEIGHT) // TILE_SIZE_IN_PIXELS) * TILE_SIZE_IN_PIXELS
             if not can_move_down:
+                # Fall damage
+                if self.y_speed > FALL_DAMAGE_THRESHOLD:
+                    self.health_bar.take_damage(math.pow(self.y_speed - FALL_DAMAGE_THRESHOLD, FALL_DAMAGE_SCALING_FACTOR))
                 # Reset jump
                 self.can_jump = True
                 new_y = y_tile_bottom - PLAYER_HEIGHT
+                # Bounce back
                 if self.y_speed < 1:
                     self.y_speed = 0
                 else:
