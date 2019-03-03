@@ -1,6 +1,5 @@
 import pygame
 
-from controllers.game_controller import GameController
 from controllers.menu_controller import MenuController
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 

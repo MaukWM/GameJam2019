@@ -40,17 +40,19 @@ class GameController(object):
 
     def handle_key_held(self, event_key):
 
-        # TODO: REMOVE THESE HACKS
-        if event_key == pygame.K_UP:
+        if event_key == pygame.K_UP or event_key == pygame.K_w or event_key == pygame.K_SPACE:
             self.game.player.jump()
 
-        # TODO: REMOVE THESE HACKS
-        elif event_key == pygame.K_LEFT:
+        elif event_key == pygame.K_LEFT or event_key == pygame.K_a:
             self.game.player.x_speed = -2
 
-        # TODO: REMOVE THESE HACKS
-        elif event_key == pygame.K_RIGHT:
+        elif event_key == pygame.K_RIGHT or event_key == pygame.K_d:
             self.game.player.x_speed = 2
+
+        # Gravitate downwards if the players want to
+        elif event_key == pygame.K_DOWN or event_key == pygame.K_s:
+            if self.game.player.y_speed != 0:
+                self.game.player.y_speed += 1
 
         elif event_key == pygame.K_1:
             self.game.player.change_item_selected(0)
@@ -71,7 +73,6 @@ class GameController(object):
         elif event_key == pygame.K_9:
             self.game.player.change_item_selected(8)
 
-
     # Handle all pygame events
     def handle_events(self):
         for event in pygame.event.get():
@@ -87,9 +88,15 @@ class GameController(object):
                 self.held_keys.remove(event.key)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                self.held_mouse_buttons.add(event.button)
+                if event.button == 4 or event.button == 5:
+                    self.handle_scroll(event.button)
+                else:
+                    self.held_mouse_buttons.add(event.button)
 
             if event.type == pygame.MOUSEBUTTONUP and event.button in self.held_mouse_buttons:
+                if event.button == 1:
+                    # LMB
+                    self.game.player.is_mining = False
                 self.held_mouse_buttons.remove(event.button)
 
         for key in self.held_keys:
@@ -97,7 +104,6 @@ class GameController(object):
 
         for button in self.held_mouse_buttons:
             self.handle_button_held(button)
-
 
     # Do all updates to the game state in this function
     def update_state(self):
@@ -129,11 +135,17 @@ class GameController(object):
             pygame.display.update()
 
     def handle_button_held(self, button):
-
         if button == 1:
             # LMB
+            self.game.player.is_mining = True
             self.game.player.mine()
 
         if button == 3:
             # RMB
             self.game.player.use_inventory_item()
+
+    def handle_scroll(self, button):
+        if button == 4:
+            self.game.player.decrement_item_selected()
+        elif button == 5:
+            self.game.player.increment_item_selected()
