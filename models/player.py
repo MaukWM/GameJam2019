@@ -185,7 +185,6 @@ class Player(object):
                 self.game.entities.append(Explosion(entity.x, entity.y, entity.width))
                 self.health_bar.take_damage(entity.size * 30)
                 self.game.entities.remove(entity)
-
                 return True
             return False
 
