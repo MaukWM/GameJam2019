@@ -25,11 +25,11 @@ RESOURCE_CHANCE_CAP = 0.25
 
 # ratio peaks when resource is most common
 resource_ratio_peaks = [None] * 5
-resource_ratio_peaks[0] = [Jeltisnium, 0.15, 0.1]
-resource_ratio_peaks[1] = [Marxinium, 0.25, 0.1]
-resource_ratio_peaks[2] = [Leninium, 0.50, 0.1]
-resource_ratio_peaks[3] = [NokiaPhonium, 0.75, 0.1]
-resource_ratio_peaks[4] = [HalfLiterKlokkium, 0.95, 0.1]
+resource_ratio_peaks[0] = [Jeltisnium, 0.15, 0.01]
+resource_ratio_peaks[1] = [Marxinium, 0.25, 0.01]
+resource_ratio_peaks[2] = [Leninium, 0.50, 0.01]
+resource_ratio_peaks[3] = [NokiaPhonium, 0.75, 0.01]
+resource_ratio_peaks[4] = [HalfLiterKlokkium, 0.95, 0.01]
 
 # to avoid magic numbers
 RATIO_MAX = 1
@@ -78,7 +78,7 @@ class World(object):
                 # Are we below where the stone starts and above where the resources start?
                 elif (y > STONE_START) and (y <= RESOURCE_START):
                     # Stone chance from sigmoid function
-                    stone_chance = self.sigmoid(10 * (y / height) - 5)
+                    stone_chance = self.sigmoid(10 * (y / height) - 2)
                     if random.uniform(0, 1) > stone_chance:
                         column.append(Dirt(self, x, y, False))
                     else:
@@ -87,7 +87,7 @@ class World(object):
                 # Are we below where the resources start?
                 elif y > RESOURCE_START:
                     # Resource chance is from sigmoid function
-                    resource_chance = self.sigmoid(10 * (y / height) - 6)
+                    resource_chance = self.sigmoid(10 * (y / height) - 3)
                     # To prevent suddenly everything being resources we cap where the sigmoid has influence
                     if resource_chance > RESOURCE_CHANCE_CAP:
                         # Here the resource chance becomes linear growing slowly
@@ -97,7 +97,7 @@ class World(object):
                         column.append(self.decide_resource(x, y, height))
                         continue
                     # If we don't spawn a resource, just spawn stone using sigmoid to decide the chance
-                    stone_chance = self.sigmoid(10 * (y / height) - 5)
+                    stone_chance = self.sigmoid(10 * (y / height) - 2)
                     if random.uniform(0, 1) > stone_chance:
                         column.append(Dirt(self, x, y, False))
                     else:

@@ -12,12 +12,12 @@ class Pickaxe():
                      ]
 
     item_to_strength = dict()
-    item_to_strength[ItemType.STONE] = 0.05
-    item_to_strength[ItemType.JELTSIUM] = 0.10
-    item_to_strength[ItemType.MARXINIUM] = 0.20
-    item_to_strength[ItemType.LENINIUM] = 0.40
-    item_to_strength[ItemType.NOKIA_PHONIUM] = 0.80
-    item_to_strength[ItemType.HALF_LITER_KLOKKIUM] = 1.60
+    item_to_strength[ItemType.STONE] = 0.10
+    item_to_strength[ItemType.JELTSIUM] = 0.20
+    item_to_strength[ItemType.MARXINIUM] = 0.40
+    item_to_strength[ItemType.LENINIUM] = 0.80
+    item_to_strength[ItemType.NOKIA_PHONIUM] = 1.60
+    item_to_strength[ItemType.HALF_LITER_KLOKKIUM] = 3.20
 
     cost_to_upgrade_from = dict()
     cost_to_upgrade_from[ItemType.STONE] = {ItemType.JELTSIUM: 10}
