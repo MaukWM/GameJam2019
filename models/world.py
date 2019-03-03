@@ -12,7 +12,8 @@ import random
 import bisect
 import math
 #values related to falling blocks
-ADDSTAB_CUTOFF = 0.1
+ADDSTAB_CUTOFF = 0.02
+ROWS_UPDATED_PER_FRAME = 20
 # These values are from above
 DIRT_START = 20
 STONE_START = 35
@@ -236,21 +237,27 @@ class World(object):
 
     def update_stabilities(self, x, y):
         source = self.get_tile_at_indices(x, y)
-        if source.is_solid():
+        if source.can_support():
             startstabb = source.get_stability() * self.get_tile_at_indices(x, y - 1).get_strength()
             addstab = startstabb
             self.get_tile_at_indices(x, y - 1).update_stability(source.get_stability())
             i = 1
-            while addstab > ADDSTAB_CUTOFF and i + x < self.width and i < 4:
+            while addstab > ADDSTAB_CUTOFF and i + x < self.width and i < 5:
                 self.get_tile_at_indices(i + x, y - 1).update_stability(addstab)
                 addstab *= self.get_tile_at_indices(i + x, y - 1).get_strength()
                 i += 1
             addstab = startstabb
             i = -1
-            while addstab > ADDSTAB_CUTOFF and x + i >= 0 and i > -4:
+            while addstab > ADDSTAB_CUTOFF and x + i >= 0 and i > -5:
                 self.get_tile_at_indices(x + i, y - 1).update_stability(addstab)
                 addstab *= self.get_tile_at_indices(x + i, y - 1).get_strength()
                 i -= 1
+
+    def remove_falling_tile(self, tile):
+        try:
+            self.falling_tiles.remove(tile)
+        except:
+            pass
 
     def step(self):
         self.wheat_step()

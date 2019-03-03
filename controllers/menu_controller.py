@@ -1,7 +1,7 @@
 import pygame
 import sys
 import time
-from controllers import game_controller
+from controllers import game_controller, help_controller
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH, FRAME_RATE, DEV_MODE
 
 
@@ -152,7 +152,8 @@ class MenuController(object):
                     self.setup()
                 # Help button
                 if self.MENU_ITEM_HELP_Y <= y <= self.MENU_ITEM_HELP_Y + self.MENU_ITEM_HEIGHT:
-                    self.toggle_help_screen()
+                    help_controller.HelpController(self.window).run()
+                    self.setup()
 
     # Handle all pygame events
     def handle_events(self):

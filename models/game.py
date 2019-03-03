@@ -29,7 +29,7 @@ class Game(object):
 
         # Iets wat niet een blokje of player is is een entity:
         self.entities = []
-        self.player = Player(self, 10, 20, memes_enabled)
+        self.player = Player(self, 10, 300, memes_enabled)
         self.game_over = False
 
     def draw(self, surface):
