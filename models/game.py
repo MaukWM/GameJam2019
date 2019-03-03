@@ -15,14 +15,14 @@ import pygame
 class Game(object):
 
     # todo: fix circular dependency and put in constants.py
-    METEOR_SPAWN_RATE = 10
     POINTS_PER_DEPTH = 100
     SCORE_TO_BE_ADDED_INCREMENTS_MINIMUM = 10
 
-    def __init__(self, width, height, memes_enabled):
+    def __init__(self, width, height, memes_enabled, rows_updated_per_frame, meteor_spawn_rate):
         self.score: int = 0
+        self.meteor_spawn_rate = meteor_spawn_rate
         self.score_to_be_added: int = 0
-        self.world = World(width, height)
+        self.world = World(width, height, rows_updated_per_frame)
         self.base_font = pygame.font.SysFont("Arial", 18)
         self.pickaxe_font = pygame.font.SysFont("Arial", 12)
         self.memes_enabled = memes_enabled
@@ -101,7 +101,7 @@ class Game(object):
                     self.entities.remove(entity)
 
         # time to maybe spawn a meteor
-        if random.randint(0, 1000) > 1000 - self.METEOR_SPAWN_RATE:
+        if random.randint(0, 1000) > 1000 - self.meteor_spawn_rate:
             self.entities.append(Meteor(random.randint(0, SCREEN_WIDTH), random.randint(50, 500) / 100, self.world))
 
         self.player.step()
