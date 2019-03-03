@@ -20,6 +20,9 @@ class GameController(object):
 
     # handle a pressed key event in the context of the game root
     def handle_key_press(self, event_key):
+        if event_key == pygame.K_e:
+            self.game.player.eat()
+
         if event_key == pygame.K_ESCAPE:
             # end the program, close the window
             pygame.quit()

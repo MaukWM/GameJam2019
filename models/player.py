@@ -10,7 +10,7 @@ from models.meteor import Meteor
 from models.explosion import Explosion
 from models.healthbar import HealthBar
 from models.world import DIRT_START
-from models.items.item_types import PATHS  # TODO: Add meme path
+from models.items.item_types import PATHS, ItemType  # TODO: Add meme path
 
 PLAYER_WIDTH, PLAYER_HEIGHT = 28, 60
 PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player.png'),
@@ -277,4 +277,7 @@ class Player(object):
         else:
             self.game.entities.append(DroppedItem(self.game, tile.item_type, x_tile, y_tile, meme_mode=self.game.memes_enabled))
 
-
+    def eat(self):
+        if self.inventory.inventory[ItemType.WHEAT].amount > 0:
+            self.hunger_bar.eat()
+            self.inventory.decrement_item_amount(ItemType.WHEAT)
