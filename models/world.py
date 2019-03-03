@@ -25,11 +25,11 @@ RESOURCE_CHANCE_CAP = 0.25
 
 # ratio peaks when resource is most common
 resource_ratio_peaks = [None] * 5
-resource_ratio_peaks[0] = [Jeltisnium, 0.15, 0.01]
-resource_ratio_peaks[1] = [Marxinium, 0.25, 0.01]
-resource_ratio_peaks[2] = [Leninium, 0.50, 0.01]
-resource_ratio_peaks[3] = [NokiaPhonium, 0.75, 0.01]
-resource_ratio_peaks[4] = [HalfLiterKlokkium, 0.95, 0.01]
+resource_ratio_peaks[0] = [Jeltisnium, 0.05, 0.03]
+resource_ratio_peaks[1] = [Marxinium, 0.25, 0.05]
+resource_ratio_peaks[2] = [Leninium, 0.50, 0.07]
+resource_ratio_peaks[3] = [NokiaPhonium, 0.75, 0.07]
+resource_ratio_peaks[4] = [HalfLiterKlokkium, 0.95, 0.1]
 
 # to avoid magic numbers
 RATIO_MAX = 1

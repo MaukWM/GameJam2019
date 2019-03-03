@@ -9,7 +9,7 @@ class GameController(object):
 
     def __init__(self, window, memes_enabled):
         # setup stuff
-        self.game = Game(SCREEN_WIDTH//TILE_SIZE_IN_PIXELS, 512, memes_enabled)
+        self.game = Game(SCREEN_WIDTH//TILE_SIZE_IN_PIXELS, 256, memes_enabled)
         self.window = window
         self.held_keys = set()
         self.held_mouse_buttons = set()

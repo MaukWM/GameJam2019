@@ -120,8 +120,8 @@ class Player(object):
             y_tile_bottom = ((new_y + PLAYER_HEIGHT) // TILE_SIZE_IN_PIXELS) * TILE_SIZE_IN_PIXELS
             if not can_move_down:
                 # Fall damage
-                if self.y_speed > FALL_DAMAGE_THRESHOLD:
-                    self.health_bar.take_damage(math.pow(self.y_speed - FALL_DAMAGE_THRESHOLD, FALL_DAMAGE_SCALING_FACTOR))
+                # if self.y_speed > FALL_DAMAGE_THRESHOLD:
+                #     self.health_bar.take_damage(math.pow(self.y_speed - FALL_DAMAGE_THRESHOLD, FALL_DAMAGE_SCALING_FACTOR))
                 # Reset jump
                 self.can_jump = True
                 new_y = y_tile_bottom - PLAYER_HEIGHT
