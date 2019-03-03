@@ -44,6 +44,7 @@ class Player(object):
         self.selected_inventory_item = 0
         self.pickaxe = Pickaxe(self)
         self.font = pygame.font.SysFont("Arial", 30, True)
+        self.shifts = False
 
     def step(self):
 
@@ -310,6 +311,6 @@ class Player(object):
                     self.inventory.inventory[ItemType(self.selected_inventory_item + 1)].amount -= 1
                     x = self.selected_tile.x
                     y = self.selected_tile.y
-                    block = self.map_inventory_to_consturcter[self.selected_inventory_item](x, y, self.world, False)
+                    block = self.map_inventory_to_consturcter[self.selected_inventory_item](x, y, self.world, not self.shifts)
                     if block is not None:
                         self.world.tile_matrix[x][y] = block

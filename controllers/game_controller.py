@@ -18,15 +18,22 @@ class GameController(object):
     def setup(self):
         pass
 
+    # handle a lifted key event
+    def handle_key_lift(self, event_key):
+        if event_key == pygame.K_LSHIFT:
+            self.game.player.shifts = False
+
     # handle a pressed key event in the context of the game root
     def handle_key_press(self, event_key):
         if event_key == pygame.K_ESCAPE:
             # end the program, close the window
             pygame.quit()
             sys.exit()
-        if event_key == pygame.K_u:
+        elif event_key == pygame.K_u:
             if self.game.player.pickaxe.is_upgradeable():
                 self.game.player.pickaxe.upgrade()
+        elif event_key == pygame.K_LSHIFT:
+            self.game.player.shifts = True
 
     def handle_key_held(self, event_key):
 
@@ -69,6 +76,7 @@ class GameController(object):
                 self.held_keys.add(event.key)
 
             if event.type == pygame.KEYUP:
+                self.handle_key_lift(event.key)
                 self.held_keys.remove(event.key)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
