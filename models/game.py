@@ -8,7 +8,7 @@ import models.world
 import models.tiles.air_tile
 from models.items.dropped_item import DroppedItem
 from models.items.item_types import ItemType
-from models.items.item_types import SCORES
+from models.items.item_types import SCORES, NAMES
 import pygame
 
 
@@ -16,14 +16,16 @@ class Game(object):
 
     # todo: fix circular dependency and put in constants.py
     METEOR_SPAWN_RATE = 10
-    POINTS_PER_DEPTH = 1000
+    POINTS_PER_DEPTH = 100
     SCORE_TO_BE_ADDED_INCREMENTS_MINIMUM = 10
 
     def __init__(self, width, height, memes_enabled):
         self.score: int = 0
         self.score_to_be_added: int = 0
         self.world = World(width, height)
-        self.font = pygame.font.SysFont("Arial", 18)
+        self.base_font = pygame.font.SysFont("Arial", 18)
+        self.pickaxe_font = pygame.font.SysFont("Arial", 12)
+        self.memes_enabled = memes_enabled
 
         # Iets wat niet een blokje of player is is een entity:
         self.entities = []
@@ -45,8 +47,15 @@ class Game(object):
         for entity in self.entities:
             entity.draw(surface, camera_y)
 
-        msg_surface = self.font.render("Score: " + str(int(self.score)), True, (255, 255, 255))
+        msg_surface = self.base_font.render("Score: " + str(int(self.score)), True, (255, 255, 255))
         surface.blit(msg_surface, ((SCREEN_WIDTH // 2) - (msg_surface.get_width() // 2), SCREEN_HEIGHT // 50))
+
+        # Check if we can upgrade the players pickaxe, if we can tell the player
+        pickaxe_ui_text_base = "Pickaxe: " + str(NAMES[self.player.pickaxe.material]) + ". "
+        if self.player.pickaxe.is_upgradeable():
+            pickaxe_ui_text_base += " Press U to upgrade pickaxe!"
+        pickaxe_ui_surface = self.pickaxe_font.render(pickaxe_ui_text_base, True, (255, 255, 255))
+        surface.blit(pickaxe_ui_surface, ((SCREEN_WIDTH // 50), SCREEN_HEIGHT // 70))
 
     def add_resource_score(self, entity: ItemType):
         self.score_to_be_added += SCORES[entity]
@@ -60,6 +69,7 @@ class Game(object):
         self.score_to_be_added += 1000 * difference
 
     def step(self):
+        self.world.step()
         # Dynamically add score
         if self.score_to_be_added > 0:
             score_to_be_added_part = self.score_to_be_added // 100  # Divide amount of points to add by 100 and add that
@@ -92,6 +102,6 @@ class Game(object):
 
         # time to maybe spawn a meteor
         if random.randint(0, 1000) > 1000 - self.METEOR_SPAWN_RATE:
-            self.entities.append(Meteor(random.randint(0, SCREEN_WIDTH), random.randint(50, 500) / 100))
+            self.entities.append(Meteor(random.randint(0, SCREEN_WIDTH), random.randint(50, 500) / 100, self.world))
 
         self.player.step()
