@@ -27,6 +27,9 @@ class Tile(ABC):
     def get_initial_strength(self):
         return 0
 
+    def is_mineable(self):
+        return self.is_solid()
+
     @abstractmethod
     def get_resistance(self):
         pass

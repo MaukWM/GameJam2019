@@ -46,6 +46,9 @@ class World(object):
         self.height = height
         self.row_counter = height - 1
 
+        from models.tiles.wheat_tile import Wheat
+        self.tile_matrix[10][19] = Wheat(self, 10, 19)
+
 
     def gen_world(self, width, height):
         """

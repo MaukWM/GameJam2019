@@ -1,6 +1,7 @@
 import math
 import pygame
 
+from models.hungerbar import HungerBar
 from models.items.inventory import Inventory
 from constants import TILE_SIZE_IN_PIXELS, FRAME_RATE, SCREEN_HEIGHT
 from models.items.dropped_item import DroppedItem
@@ -31,6 +32,7 @@ class Player(object):
         self.selected_tile = None
         self.inventory = Inventory(memes_enabled)
         self.health_bar = HealthBar()
+        self.hunger_bar = HungerBar(self)
 
     def step(self):
 
@@ -98,6 +100,11 @@ class Player(object):
             self.game.add_depth_score(difference)
 
         self.check_entity_collisions()
+        self.hunger_bar.step()
+
+        # Check Health status
+        if self.health_bar.health <= 0:
+            self.game.game_over = True
 
         # Realistic friction ;P
         self.x_speed *= 0.8
@@ -125,8 +132,7 @@ class Player(object):
                 self.game.entities.append(Explosion(entity.x, entity.y, entity.width))
                 self.health_bar.take_damage(entity.size * 30)
                 self.game.entities.remove(entity)
-                if self.health_bar.health <= 0:
-                    self.game.game_over = True
+
                 return True
             return False
 
@@ -147,6 +153,7 @@ class Player(object):
         surface.blit(PLAYER_SPRITE, (self.x, self.y - camera_y))
         self.inventory.draw(surface)
         self.health_bar.draw(surface)
+        self.hunger_bar.draw(surface)
         if self.selected_tile is not None:
             rect = (
                 self.selected_tile.x * TILE_SIZE_IN_PIXELS,
@@ -252,7 +259,7 @@ class Player(object):
         self.set_selected_tile(self.find_selected_tile(mouse_x, mouse_y))
 
     def mine(self):
-        if self.selected_tile is not None and self.selected_tile.is_solid():
+        if self.selected_tile is not None and self.selected_tile.is_mineable():
             destroyed = self.selected_tile.damage(PLAYER_DAMAGE)
             if destroyed:
                 self.drop_item(self.selected_tile)
@@ -260,6 +267,14 @@ class Player(object):
 
     def drop_item(self, tile):
         x_tile, y_tile = tile.x * TILE_SIZE_IN_PIXELS, tile.y * TILE_SIZE_IN_PIXELS
-        self.game.entities.append(DroppedItem(self.game, tile.item_type, x_tile, y_tile, meme_mode=self.game.memes_enabled))
+
+        # Allow for multi-spawning
+        if isinstance(tile.item_type, dict):
+            for item_type, amount in tile.item_type.items():
+                for i in range(amount):
+                    self.game.entities.append(
+                        DroppedItem(self.game, item_type, x_tile, y_tile, meme_mode=self.game.memes_enabled))
+        else:
+            self.game.entities.append(DroppedItem(self.game, tile.item_type, x_tile, y_tile, meme_mode=self.game.memes_enabled))
 
 
