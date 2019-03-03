@@ -29,7 +29,7 @@ class Tile(ABC):
         return 0
 
     def is_mineable(self):
-        return self.is_solid()
+        return True
 
     @abstractmethod
     def get_resistance(self):
@@ -54,7 +54,7 @@ class Tile(ABC):
         return self.stability
 
     def update_stability(self, incrementation):
-        if self.is_solid():
+        if self.can_support():
             self.stability += incrementation
             if self.stability > 1:
                 self.stability = 1

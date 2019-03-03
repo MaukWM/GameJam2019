@@ -16,3 +16,6 @@ class Air(Tile):
 
     def check_stability(self):
         return False
+
+    def is_mineable(self):
+        return False
