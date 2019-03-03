@@ -1,7 +1,6 @@
 import math
 import pygame
 
-from constants import TILE_SIZE_IN_PIXELS, FRAME_RATE
 from models.items.inventory import Inventory
 from constants import TILE_SIZE_IN_PIXELS, FRAME_RATE, SCREEN_HEIGHT
 from models.items.dropped_item import DroppedItem
@@ -9,13 +8,24 @@ from models.items.dropped_item import DROPPED_ITEM_HEIGHT, DROPPED_ITEM_WIDTH
 from models.meteor import Meteor
 from models.explosion import Explosion
 from models.healthbar import HealthBar
+from models.tiles.air_tile import Air
+from models.tiles.dirt_tile import Dirt
+from models.tiles.half_liter_klokkium_tile import HalfLiterKlokkium
+from models.tiles.jeltisium_tile import Jeltisnium
+from models.tiles.leninium_tile import Leninium
+from models.tiles.marxinium_tile import Marxinium
+from models.tiles.nokia_phonium_tile import NokiaPhonium
+from models.tiles.stone_tile import Stone
 from models.world import DIRT_START
 from models.pickaxe import Pickaxe
-from models.items.item_types import PATHS  # TODO: Add meme path
+from models.items.item_types import PATHS, ItemType  # TODO: Add meme path
 
-PLAYER_WIDTH, PLAYER_HEIGHT = TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2
+PLAYER_WIDTH, PLAYER_HEIGHT = 28, 60
 PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player.png'),
                                        (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2))
+                                       (PLAYER_WIDTH, PLAYER_HEIGHT))
+
+DIFFERENT_ITEM_NUMBER = 7
 
 
 class Player(object):
@@ -32,6 +42,7 @@ class Player(object):
         self.selected_tile = None
         self.inventory = Inventory(memes_enabled)
         self.health_bar = HealthBar()
+        self.selected_inventory_item = 0
         self.pickaxe = Pickaxe(self)
         self.font = pygame.font.SysFont("Arial", 30, True)
 
@@ -53,10 +64,13 @@ class Player(object):
             # We're moving right
             # Check if we can move further right in the tile we're in at the new timestep
             # The y-position is kept at the old value for now, since it has not been validated yet
-            can_move_right = self.can_move_to_relative_tile_x(1, x=new_x, y=self.y)
+            can_move_right = self.can_move_to_relative_tile_x(0, x=new_x + PLAYER_WIDTH, y=self.y)
+
+            # Compute the tile index of the tile containing the right side of the player
+            x_tile_right = ((new_x + PLAYER_WIDTH) // TILE_SIZE_IN_PIXELS)*TILE_SIZE_IN_PIXELS
             if not can_move_right:
                 # If we can't, keep the player at the edge of the tile we're in at the new timestep
-                new_x = x_tile
+                new_x = x_tile_right - PLAYER_WIDTH
                 self.x_speed = 0
 
         elif self.x_speed < 0:
@@ -72,11 +86,14 @@ class Player(object):
         if self.y_speed > 0:
             # Falling down, check the tile below the player on the new x and y
             # I use the new x here because it has already been validated and corrected above
-            can_move_down = self.can_move_to_relative_tile_y(2, x=new_x, y=new_y)
+            can_move_down = self.can_move_to_relative_tile_y(0, x=new_x, y=new_y + PLAYER_HEIGHT)
+
+            # Compute the tile index of the tile containing the bottom side of the player
+            y_tile_bottom = ((new_y + PLAYER_HEIGHT) // TILE_SIZE_IN_PIXELS)*TILE_SIZE_IN_PIXELS
             if not can_move_down:
                 # Reset jump
                 self.can_jump = True
-                new_y = y_tile
+                new_y = y_tile_bottom - PLAYER_HEIGHT
                 if self.y_speed < 1:
                     self.y_speed = 0
                 else:
@@ -142,7 +159,7 @@ class Player(object):
 
     def draw(self, surface, camera_y):
         surface.blit(PLAYER_SPRITE, (self.x, self.y - camera_y))
-        self.inventory.draw(surface)
+        self.inventory.draw(surface, self.selected_inventory_item)
         self.health_bar.draw(surface)
         if self.selected_tile is not None:
             rect = (
@@ -169,11 +186,11 @@ class Player(object):
 
         tile_x, tile_y = x // TILE_SIZE_IN_PIXELS, y // TILE_SIZE_IN_PIXELS
 
-        # If we're exactly on a tile border, check 2 neighbouring tiles, else check 3
-        if y % TILE_SIZE_IN_PIXELS == 0:
-            y_range = 2
-        else:
-            y_range = 3
+        # Compute the number of tiles that the player spans over the x-axis
+        # The small offset is added to avoid one-off errors. I'm vewy sowwy UwU - Gewwyfwap
+        y_range = int((y + PLAYER_HEIGHT - 1e-5)//TILE_SIZE_IN_PIXELS - tile_y)
+        y_range += 1
+
 
         # Check the tiles on all checked delta y
         for dy in range(y_range):
@@ -200,10 +217,10 @@ class Player(object):
 
         tile_x, tile_y = x // TILE_SIZE_IN_PIXELS, y // TILE_SIZE_IN_PIXELS
 
-        if x % TILE_SIZE_IN_PIXELS == 0:
-            x_range = 1
-        else:
-            x_range = 2
+        # Compute the number of tiles that the player spans over the x-axis
+        # The small offset is added to avoid one-off errors. I'm vewy sowwy UwU - Gewwyfwap
+        x_range = int((x + PLAYER_WIDTH - 1e-5)//TILE_SIZE_IN_PIXELS - tile_x)
+        x_range += 1
 
         for dx in range(x_range):
             tile = self.world.get_tile_at_indices(int(tile_x + dx), int(tile_y + dy))
@@ -259,4 +276,41 @@ class Player(object):
         x_tile, y_tile = tile.x * TILE_SIZE_IN_PIXELS, tile.y * TILE_SIZE_IN_PIXELS
         self.game.entities.append(DroppedItem(self.game, tile.item_type, x_tile, y_tile, meme_mode=self.game.memes_enabled))
 
+    #kan gebruikt worden als je een scrollwheel gebruikt
+    def increment_item_selected(self, bool):
+        if bool:
+            self.change_item_selected(self.selected_inventory_item + 1)
+        else:
+            self.change_item_selected(self.selected_inventory_item + 1)
 
+    def change_item_selected(self, number):
+        self.selected_inventory_item = number % DIFFERENT_ITEM_NUMBER
+
+    map_inventory_to_placeable = {0:True,
+                                 1:True,
+                                 2:True,
+                                 3:True,
+                                 4:True,
+                                 5:True,
+                                 6:True,
+                                 }
+
+    map_inventory_to_consturcter = {0:lambda x,y,world : Dirt(world,x,y,False),
+                                    1:lambda x,y,world : Stone(world,x,y),
+                                    2:lambda x,y,world : Jeltisnium(world,x,y, False),
+                                    3:lambda x,y,world : Leninium(world,x,y, False),
+                                    4:lambda x,y,world : Marxinium(world,x,y, False),
+                                    5:lambda x,y,world : NokiaPhonium(world,x,y, False),
+                                    6:lambda x,y,world : HalfLiterKlokkium(world,x,y, False),
+                                  }
+
+    def use_inventory_item(self):
+        if self.map_inventory_to_placeable[self.selected_inventory_item]:
+            if isinstance(self.selected_tile, Air):
+                if self.inventory.inventory[ItemType(self.selected_inventory_item + 1)].amount > 0:
+                    self.inventory.inventory[ItemType(self.selected_inventory_item + 1)].amount -= 1
+                    x = self.selected_tile.x
+                    y = self.selected_tile.y
+                    block = self.map_inventory_to_consturcter[self.selected_inventory_item](x, y, self.world)
+                    if block is not None:
+                        self.world.tile_matrix[x][y] = block

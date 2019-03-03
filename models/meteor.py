@@ -18,7 +18,7 @@ class Meteor(object):
     # the speed of the meteor, in pixels/second
     speed = 320 / FRAME_RATE
 
-    def __init__(self, spawn_x, size):
+    def __init__(self, spawn_x, size, world):
         """
         :param spawn_x: spawn at this x position, in pixels
         :param size: an integer that describes the radius of the meteor in pixels
@@ -32,6 +32,7 @@ class Meteor(object):
         self.width = sizes_and_sprite[0]
         self.height = sizes_and_sprite[1]
         self.SPRITE = sizes_and_sprite[2]
+        self.world = world
 
         # used for step calculations
         self.delta_x = math.sin(self.angle) * self.speed
@@ -68,7 +69,7 @@ class Meteor(object):
                                 it_breaks = game_tiles[effective_x][effective_y].damage(damage)
                                 if it_breaks:
                                     tile_broken = game_tiles[effective_x][effective_y]
-                                    game_tiles[effective_x][effective_y] = models.tiles.air_tile.Air(self, grid_x + delta_x, grid_y + delta_y)
+                                    game_tiles[effective_x][effective_y] = models.tiles.air_tile.Air(self.world, grid_x + delta_x, grid_y + delta_y)
                                     self.drop_item(effective_x, effective_y, tile_broken)
                 return True
         return False
