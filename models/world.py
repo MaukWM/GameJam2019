@@ -46,6 +46,10 @@ class World(object):
         self.width = width
         self.height = height
         self.row_counter = height - 1
+        self.growing_wheat = set()
+
+        from models.tiles.wheat_tile import Wheat
+        self.tile_matrix[10][19] = Wheat(self, 10, 19)
 
     def gen_world(self, width, height):
         """
@@ -248,8 +252,8 @@ class World(object):
                 addstab *= self.get_tile_at_indices(x + i, y - 1).get_strength()
                 i -= 1
 
-
     def step(self):
+        self.wheat_step()
         self.update_should_fall()
         i = 0
         while i < len(self.falling_tiles):
@@ -258,6 +262,20 @@ class World(object):
                 self.falling_tiles.remove(tile)
             else:
                 i += 1
+
+    def wheat_step(self):
+        to_remove = set()
+        for wheat in self.growing_wheat:
+            if self.get_tile_at_indices(wheat.x, wheat.y) != wheat:
+                to_remove.add(wheat)
+            else:
+                wheat.grow_step()
+
+        for wheat in to_remove:
+            self.growing_wheat.remove(wheat)
+
+    def register_wheat(self, tile):
+        self.growing_wheat.add(tile)
 
 if __name__ == "__main__":
     world = World(64, 1024)
