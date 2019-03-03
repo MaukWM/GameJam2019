@@ -78,7 +78,6 @@ class Game(object):
         # Increase meteor damage and spawn rate according to difficulty at the start
         self.meteor_spawn_rate += 0.015 * self.difficulty_factor
         self.meteor_damage_multiplier += 0.0005 * self.difficulty_factor
-        print(self.meteor_spawn_rate, self.meteor_damage_multiplier)
         self.world.step()
         # Dynamically add score
         if self.score_to_be_added > 0:
