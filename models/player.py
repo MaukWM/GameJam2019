@@ -17,12 +17,13 @@ from models.tiles.marxinium_tile import Marxinium
 from models.tiles.nokia_phonium_tile import NokiaPhonium
 from models.tiles.stone_tile import Stone
 from models.world import DIRT_START
+from models.pickaxe import Pickaxe
 from models.items.item_types import PATHS, ItemType  # TODO: Add meme path
 
 PLAYER_WIDTH, PLAYER_HEIGHT = 28, 60
 PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player.png'),
                                        (PLAYER_WIDTH, PLAYER_HEIGHT))
-PLAYER_DAMAGE = 0.05
+
 DIFFERENT_ITEM_NUMBER = 7
 
 
@@ -41,6 +42,8 @@ class Player(object):
         self.inventory = Inventory(memes_enabled)
         self.health_bar = HealthBar()
         self.selected_inventory_item = 0
+        self.pickaxe = Pickaxe(self)
+        self.font = pygame.font.SysFont("Arial", 30, True)
 
     def step(self):
 
@@ -107,6 +110,7 @@ class Player(object):
             self.highest_reached_y = new_tile_y
             self.game.add_depth_score(difference)
 
+        # Check for collisions with items and meteorites
         self.check_entity_collisions()
 
         # Realistic friction ;P
@@ -117,7 +121,6 @@ class Player(object):
             if (self.x - entity.x) < 4 and (self.y - entity.y) < 4:
                 if isinstance(entity, DroppedItem) or isinstance(entity, Meteor):
                     self.check_entity_collision(entity)
-
 
     def check_entity_collision(self, entity):
         player_box = (self.x, self.y, PLAYER_WIDTH, PLAYER_HEIGHT)
@@ -263,7 +266,7 @@ class Player(object):
 
     def mine(self):
         if self.selected_tile is not None and self.selected_tile.is_solid():
-            destroyed = self.selected_tile.damage(PLAYER_DAMAGE)
+            destroyed = self.selected_tile.damage(self.pickaxe.strength)
             if destroyed:
                 self.drop_item(self.selected_tile)
                 self.world.destroy_tile(self.selected_tile)

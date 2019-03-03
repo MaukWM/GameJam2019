@@ -24,6 +24,9 @@ class GameController(object):
             # end the program, close the window
             pygame.quit()
             sys.exit()
+        if event_key == pygame.K_u:
+            if self.game.player.pickaxe.is_upgradeable():
+                self.game.player.pickaxe.upgrade()
 
     def handle_key_held(self, event_key):
 
