@@ -117,7 +117,6 @@ class GameController(object):
             pygame.display.update()
 
     def handle_button_held(self, button):
-        print(button)
         if button == 1:
             # LMB
             self.game.player.mine()
