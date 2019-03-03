@@ -18,7 +18,7 @@ class Meteor(object):
     # the speed of the meteor, in pixels/second
     speed = 320 / FRAME_RATE
 
-    def __init__(self, spawn_x, size, world):
+    def __init__(self, spawn_x, size, world, damage_multiplier=1):
         """
         :param spawn_x: spawn at this x position, in pixels
         :param size: an integer that describes the radius of the meteor in pixels
@@ -37,6 +37,8 @@ class Meteor(object):
         # used for step calculations
         self.delta_x = math.sin(self.angle) * self.speed
         self.delta_y = math.cos(self.angle) * self.speed
+
+        self.damage_multiplier = damage_multiplier
 
     # update the internal state to the next state
     def step(self):
@@ -73,7 +75,7 @@ class Meteor(object):
                     for delta_y in range(-range_size, range_size):
                         distance_factor = (delta_x**2 + delta_y**2) / self.size**2
                         if distance_factor < 1:
-                            damage = 0.5 - distance_factor/(self.size*0.5)
+                            damage = (0.5 - distance_factor/(self.size*0.5)) * self.damage_multiplier
                             effective_y = grid_y + delta_y
                             effective_x = grid_x + delta_x
                             if effective_y >= 0 and effective_y < height and effective_x >= 0 and effective_x < width:
