@@ -19,9 +19,8 @@ class HalfLiterKlokkium(Tile):
         self.item_type = ItemType.HALF_LITER_KLOKKIUM
         self.ore_bool = ore_bool
         self.solid = solid
-
-    def get_strength(self):
-        return 1
+    def get_initial_strength(self):
+        return 0.7
 
     def is_solid(self):
         return self.solid
