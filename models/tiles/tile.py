@@ -66,7 +66,6 @@ class Tile(ABC):
         if self.isfalling:
             return False
         if self.stability < FALLING_THRESHOLD:
-            print(self.stability)
             self.isfalling = True
             return True
         return False
