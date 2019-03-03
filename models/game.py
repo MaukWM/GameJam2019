@@ -92,7 +92,7 @@ class Game(object):
                     # this meteor is below DIRT_START, Check collision
                     try:
                         if entity.is_colliding(TILE_SIZE_IN_PIXELS, self.world.tile_matrix):
-                            self.entities.append(Explosion(entity.x, entity.y, entity.width * 3))
+                            self.entities.append(Explosion(entity.x + entity.width/2, entity.y + entity.height/4, entity.width * 3))
                             self.entities.remove(entity)
                     except NotOnScreenError:
                         self.entities.remove(entity)

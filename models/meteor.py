@@ -50,35 +50,39 @@ class Meteor(object):
         surface.blit(self.SPRITE, (to_draw_x, to_draw_y))
 
     def is_colliding(self, TILE_SIZE, game_tiles):
-        lower_grid_x = int(self.x / TILE_SIZE)
-        lower_grid_y = int(self.y / TILE_SIZE)
+        grid_x = int((self.x + self.width/2) / TILE_SIZE)
+        grid_y = int((self.y + self.height/2) / TILE_SIZE)
         upper_grid_x = math.ceil((self.x + self.width) / TILE_SIZE)
         upper_grid_y = math.ceil((self.y + self.height) / TILE_SIZE)
         width = len(game_tiles)
         height = len(game_tiles[0])
         collide = False
+        '''
         for grid_x in range(lower_grid_x, upper_grid_x + 1):
             for grid_y in range(lower_grid_y, upper_grid_y + 1):
                 if grid_y >= 0 and grid_y < height and grid_x >= 0 and grid_x < width:
                     if type(game_tiles[grid_x][grid_y]) != models.tiles.air_tile.Air:
                         collide = True
-        if collide:
-            range_size = int(math.ceil(self.size))
-            # The x,y-position of this meteor contains a non-air tile, collision
-            for delta_x in range(-range_size, range_size):
-                for delta_y in range(-range_size, range_size):
-                    distance_factor = (delta_x**2 + delta_y**2) / self.size**2
-                    if distance_factor < 1:
-                        damage = 0.5 - distance_factor/(self.size*0.5)
-                        effective_y = grid_y + delta_y
-                        effective_x = grid_x + delta_x
-                        if effective_y >= 0 and effective_y < height and effective_x >= 0 and effective_x < width:
-                            it_breaks = game_tiles[effective_x][effective_y].damage(damage)
-                            if it_breaks:
-                                tile_broken = game_tiles[effective_x][effective_y]
-                                game_tiles[effective_x][effective_y] = models.tiles.air_tile.Air(self.world, grid_x + delta_x, grid_y + delta_y)
-                                self.drop_item(effective_x, effective_y, tile_broken)
-            return True
+        '''
+        if grid_y >= 0 and grid_y < height and grid_x >= 0 and grid_x < width:
+            #if type(game_tiles[grid_x][grid_y]) != models.tiles.air_tile.Air:
+            if game_tiles[grid_x][grid_y].is_solid():
+                range_size = int(math.ceil(self.size))
+                # The x,y-position of this meteor contains a non-air tile, collision
+                for delta_x in range(-range_size, range_size):
+                    for delta_y in range(-range_size, range_size):
+                        distance_factor = (delta_x**2 + delta_y**2) / self.size**2
+                        if distance_factor < 1:
+                            damage = 0.5 - distance_factor/(self.size*0.5)
+                            effective_y = grid_y + delta_y
+                            effective_x = grid_x + delta_x
+                            if effective_y >= 0 and effective_y < height and effective_x >= 0 and effective_x < width:
+                                it_breaks = game_tiles[effective_x][effective_y].damage(damage)
+                                if it_breaks:
+                                    tile_broken = game_tiles[effective_x][effective_y]
+                                    game_tiles[effective_x][effective_y] = models.tiles.air_tile.Air(self.world, grid_x + delta_x, grid_y + delta_y)
+                                    self.drop_item(effective_x, effective_y, tile_broken)
+                return True
         return False
 
     def drop_item(self, x, y, tile_broken):
