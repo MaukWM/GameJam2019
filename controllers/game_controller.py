@@ -20,6 +20,9 @@ class GameController(object):
 
     # handle a pressed key event in the context of the game root
     def handle_key_press(self, event_key):
+        if event_key == pygame.K_e:
+            self.game.player.eat()
+
         if event_key == pygame.K_ESCAPE:
             # end the program, close the window
             pygame.quit()
@@ -56,6 +59,10 @@ class GameController(object):
             self.game.player.change_item_selected(5)
         elif event_key == pygame.K_7:
             self.game.player.change_item_selected(6)
+        elif event_key == pygame.K_8:
+            self.game.player.change_item_selected(7)
+        elif event_key == pygame.K_9:
+            self.game.player.change_item_selected(8)
 
 
     # Handle all pygame events
