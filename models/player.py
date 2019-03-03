@@ -44,7 +44,6 @@ PLAYER_LEGS_WALKING_FRAMES = [
 PICKAXE = pygame.image.load('assets/graphics/pickaxe.png')
 
 PLAYER_DAMAGE = 0.05
-                                       (PLAYER_WIDTH, PLAYER_HEIGHT))
 
 DIFFERENT_ITEM_NUMBER = 7
 
