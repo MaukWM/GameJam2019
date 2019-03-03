@@ -2,7 +2,6 @@ from models.tiles.tile import Tile
 
 
 class Air(Tile):
-
     def can_support(self):
         return False
 
@@ -16,4 +15,7 @@ class Air(Tile):
         return False
 
     def check_stability(self):
+        return False
+
+    def is_mineable(self):
         return False
