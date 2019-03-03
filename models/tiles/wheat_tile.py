@@ -64,6 +64,9 @@ class Wheat(Tile):
     def is_solid(self):
         return False
 
+    def can_support(self):
+        return False
+
     def draw(self, surface, camera_y):
         drawn_sprite = min(int(self.growth_level*len(WHEAT_SPRITES)), len(WHEAT_SPRITES)-1)
         x, y = self.x * TILE_SIZE_IN_PIXELS, self.y * TILE_SIZE_IN_PIXELS - camera_y
