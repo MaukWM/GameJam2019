@@ -29,9 +29,9 @@ class Meteor(object):
         self.angle = (random.randint(0, 14) - 7) / 10
         sizes_and_sprite = self.sizes_and_sprites[random.randint(0, len(self.sizes_and_sprites) - 1)]
 
-        self.width = sizes_and_sprite[0]
-        self.height = sizes_and_sprite[1]
-        self.SPRITE = sizes_and_sprite[2]
+        self.width = int(sizes_and_sprite[0]*size/2)
+        self.height = int(sizes_and_sprite[1]*size/2)
+        self.SPRITE = pygame.transform.scale(sizes_and_sprite[2], (self.width, self.height))
         self.world = world
 
         # used for step calculations
@@ -50,12 +50,23 @@ class Meteor(object):
         surface.blit(self.SPRITE, (to_draw_x, to_draw_y))
 
     def is_colliding(self, TILE_SIZE, game_tiles):
-        grid_x = int(self.x / TILE_SIZE)
-        grid_y = int(self.y / TILE_SIZE)
+        grid_x = int((self.x + self.width/2) / TILE_SIZE)
+        grid_y = int((self.y + self.height/2) / TILE_SIZE)
+        upper_grid_x = math.ceil((self.x + self.width) / TILE_SIZE)
+        upper_grid_y = math.ceil((self.y + self.height) / TILE_SIZE)
         width = len(game_tiles)
         height = len(game_tiles[0])
+        collide = False
+        '''
+        for grid_x in range(lower_grid_x, upper_grid_x + 1):
+            for grid_y in range(lower_grid_y, upper_grid_y + 1):
+                if grid_y >= 0 and grid_y < height and grid_x >= 0 and grid_x < width:
+                    if type(game_tiles[grid_x][grid_y]) != models.tiles.air_tile.Air:
+                        collide = True
+        '''
         if grid_y >= 0 and grid_y < height and grid_x >= 0 and grid_x < width:
-            if type(game_tiles[grid_x][grid_y]) != models.tiles.air_tile.Air:
+            #if type(game_tiles[grid_x][grid_y]) != models.tiles.air_tile.Air:
+            if game_tiles[grid_x][grid_y].is_solid():
                 range_size = int(math.ceil(self.size))
                 # The x,y-position of this meteor contains a non-air tile, collision
                 for delta_x in range(-range_size, range_size):
