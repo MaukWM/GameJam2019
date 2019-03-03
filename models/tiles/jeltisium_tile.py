@@ -9,12 +9,15 @@ STONE_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/stone.p
 
 class Jeltisnium(Tile):
 
+    def get_resistance(self):
+        return 5.0
+
     def __init__(self, world, x, y):
         super().__init__(world, x, y)
         self.item_type = ItemType.JELTSIUM
 
     def get_strength(self):
-        return 5.0
+        return 1
 
     def is_solid(self):
         return True

@@ -8,6 +8,8 @@ STONE_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/stone.p
 
 
 class NokiaPhonium(Tile):
+    def get_resistance(self):
+        return 50.0
 
     def __init__(self, world, x, y):
         super().__init__(world, x, y)

@@ -8,6 +8,11 @@ STONE_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/stone.p
 
 
 class Stone(Tile):
+    def get_initial_strength(self):
+        return 0.7
+
+    def get_resistance(self):
+        return 10
 
     def __init__(self, world, x, y):
         super().__init__(world, x, y)
