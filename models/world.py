@@ -253,7 +253,10 @@ class World(object):
                 i -= 1
 
     def remove_falling_tile(self, tile):
-        self.falling_tiles.remove(tile)
+        try:
+            self.falling_tiles.remove(tile)
+        except:
+            pass
 
     def step(self):
         self.wheat_step()
