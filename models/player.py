@@ -10,6 +10,11 @@ from models.explosion import Explosion
 from models.healthbar import HealthBar
 from models.tiles.air_tile import Air
 from models.tiles.dirt_tile import Dirt
+from models.tiles.half_liter_klokkium_tile import HalfLiterKlokkium
+from models.tiles.jeltisium_tile import Jeltisnium
+from models.tiles.leninium_tile import Leninium
+from models.tiles.marxinium_tile import Marxinium
+from models.tiles.nokia_phonium_tile import NokiaPhonium
 from models.tiles.stone_tile import Stone
 from models.world import DIRT_START
 from models.items.item_types import PATHS, ItemType  # TODO: Add meme path
@@ -279,15 +284,20 @@ class Player(object):
 
     map_inventory_to_placeable = {0:True,
                                  1:True,
-                                 2:False,
-                                 3:False,
-                                 4:False,
-                                 5:False,
-                                 6:False,
+                                 2:True,
+                                 3:True,
+                                 4:True,
+                                 5:True,
+                                 6:True,
                                  }
 
     map_inventory_to_consturcter = {0:lambda x,y,world : Dirt(world,x,y,False),
                                     1:lambda x,y,world : Stone(world,x,y),
+                                    2:lambda x,y,world : Jeltisnium(world,x,y),
+                                    3:lambda x,y,world : Leninium(world,x,y),
+                                    4:lambda x,y,world : Marxinium(world,x,y),
+                                    5:lambda x,y,world : NokiaPhonium(world,x,y),
+                                    6:lambda x,y,world : HalfLiterKlokkium(world,x,y),
                                   }
 
     def use_inventory_item(self):
