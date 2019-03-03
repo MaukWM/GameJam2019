@@ -59,9 +59,6 @@ class Wheat(Tile):
         x, y = self.x * TILE_SIZE_IN_PIXELS, self.y * TILE_SIZE_IN_PIXELS - camera_y
         surface.blit(WHEAT_SPRITES[drawn_sprite], (x, y))
 
-    def is_mineable(self):
-        return True
-
     def grow_step(self):
         self.growth_level += self.growing_speed
         self.growth_level = min(1.0, self.growth_level)

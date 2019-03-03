@@ -236,7 +236,7 @@ class World(object):
 
     def update_stabilities(self, x, y):
         source = self.get_tile_at_indices(x, y)
-        if source.is_solid():
+        if source.can_support():
             startstabb = source.get_stability() * self.get_tile_at_indices(x, y - 1).get_strength()
             addstab = startstabb
             self.get_tile_at_indices(x, y - 1).update_stability(source.get_stability())
