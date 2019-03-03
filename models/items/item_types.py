@@ -12,7 +12,16 @@ class ItemType(Enum):
     WHEAT = 8
     SEEDS = 9
 
-SCORES = {}
+NAMES = dict()
+NAMES[ItemType.DIRT] = "Dirt"
+NAMES[ItemType.STONE] = "Stone"
+NAMES[ItemType.JELTSIUM] = "Jeltisium"
+NAMES[ItemType.MARXINIUM] = "Marxinium"
+NAMES[ItemType.LENINIUM] = "Leninium"
+NAMES[ItemType.NOKIA_PHONIUM] = "Nokia Phonium"
+NAMES[ItemType.HALF_LITER_KLOKKIUM] = "Half Liter Klokkium"
+
+SCORES = dict()
 SCORES[ItemType.DIRT] = 0
 SCORES[ItemType.STONE] = 0
 SCORES[ItemType.JELTSIUM] = 250
@@ -23,7 +32,7 @@ SCORES[ItemType.HALF_LITER_KLOKKIUM] = 50000
 SCORES[ItemType.WHEAT] = 250
 SCORES[ItemType.SEEDS] = 10
 
-PATHS = {}
+PATHS = dict()
 PATHS[ItemType.DIRT] = {"location": "assets/graphics/items/dirt_item.png"}
 PATHS[ItemType.STONE] = {"location": "assets/graphics/items/stone_item.png"}
 PATHS[ItemType.JELTSIUM] = {"location": "assets/graphics/items/jeltsium_item.png"}
@@ -34,7 +43,7 @@ PATHS[ItemType.HALF_LITER_KLOKKIUM] = {"location": "assets/graphics/items/half_l
 PATHS[ItemType.WHEAT] = {"location": "assets/graphics/items/wheat_item.png"}
 PATHS[ItemType.SEEDS] = {"location": "assets/graphics/items/seeds_item.png"}
 
-MEME_PATHS = {}
+MEME_PATHS = dict()
 MEME_PATHS[ItemType.DIRT] = {"location": "assets/graphics/items/dirt_item.png"}
 MEME_PATHS[ItemType.STONE] = {"location": "assets/graphics/items/stone_item.png"}
 MEME_PATHS[ItemType.JELTSIUM] = {"location": "assets/graphics/items/meme_jeltsium_item.png"}

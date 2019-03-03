@@ -9,13 +9,23 @@ from models.items.dropped_item import DROPPED_ITEM_HEIGHT, DROPPED_ITEM_WIDTH
 from models.meteor import Meteor
 from models.explosion import Explosion
 from models.healthbar import HealthBar
+from models.tiles.air_tile import Air
+from models.tiles.dirt_tile import Dirt
+from models.tiles.half_liter_klokkium_tile import HalfLiterKlokkium
+from models.tiles.jeltisium_tile import Jeltisnium
+from models.tiles.leninium_tile import Leninium
+from models.tiles.marxinium_tile import Marxinium
+from models.tiles.nokia_phonium_tile import NokiaPhonium
+from models.tiles.stone_tile import Stone
 from models.world import DIRT_START
+from models.pickaxe import Pickaxe
 from models.items.item_types import PATHS, ItemType  # TODO: Add meme path
 
 PLAYER_WIDTH, PLAYER_HEIGHT = 28, 60
 PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player.png'),
                                        (PLAYER_WIDTH, PLAYER_HEIGHT))
-PLAYER_DAMAGE = 0.05
+
+DIFFERENT_ITEM_NUMBER = 7
 
 
 class Player(object):
@@ -32,6 +42,9 @@ class Player(object):
         self.selected_tile = None
         self.inventory = Inventory(memes_enabled)
         self.health_bar = HealthBar()
+        self.selected_inventory_item = 0
+        self.pickaxe = Pickaxe(self)
+        self.font = pygame.font.SysFont("Arial", 30, True)
         self.hunger_bar = HungerBar(self)
 
     def step(self):
@@ -99,6 +112,7 @@ class Player(object):
             self.highest_reached_y = new_tile_y
             self.game.add_depth_score(difference)
 
+        # Check for collisions with items and meteorites
         self.check_entity_collisions()
         self.hunger_bar.step()
 
@@ -114,7 +128,6 @@ class Player(object):
             if (self.x - entity.x) < 4 and (self.y - entity.y) < 4:
                 if isinstance(entity, DroppedItem) or isinstance(entity, Meteor):
                     self.check_entity_collision(entity)
-
 
     def check_entity_collision(self, entity):
         player_box = (self.x, self.y, PLAYER_WIDTH, PLAYER_HEIGHT)
@@ -151,7 +164,7 @@ class Player(object):
 
     def draw(self, surface, camera_y):
         surface.blit(PLAYER_SPRITE, (self.x, self.y - camera_y))
-        self.inventory.draw(surface)
+        self.inventory.draw(surface, self.selected_inventory_item)
         self.health_bar.draw(surface)
         self.hunger_bar.draw(surface)
         if self.selected_tile is not None:
@@ -260,7 +273,7 @@ class Player(object):
 
     def mine(self):
         if self.selected_tile is not None and self.selected_tile.is_mineable():
-            destroyed = self.selected_tile.damage(PLAYER_DAMAGE)
+            destroyed = self.selected_tile.damage(self.pickaxe.strength)
             if destroyed:
                 self.drop_item(self.selected_tile)
                 self.world.destroy_tile(self.selected_tile)
@@ -277,6 +290,44 @@ class Player(object):
         else:
             self.game.entities.append(DroppedItem(self.game, tile.item_type, x_tile, y_tile, meme_mode=self.game.memes_enabled))
 
+    #kan gebruikt worden als je een scrollwheel gebruikt
+    def increment_item_selected(self, bool):
+        if bool:
+            self.change_item_selected(self.selected_inventory_item + 1)
+        else:
+            self.change_item_selected(self.selected_inventory_item + 1)
+
+    def change_item_selected(self, number):
+        self.selected_inventory_item = number % DIFFERENT_ITEM_NUMBER
+
+    map_inventory_to_placeable = {0:True,
+                                 1:True,
+                                 2:True,
+                                 3:True,
+                                 4:True,
+                                 5:True,
+                                 6:True,
+                                 }
+
+    map_inventory_to_consturcter = {0:lambda x,y,world : Dirt(world,x,y,False),
+                                    1:lambda x,y,world : Stone(world,x,y),
+                                    2:lambda x,y,world : Jeltisnium(world,x,y, False),
+                                    3:lambda x,y,world : Leninium(world,x,y, False),
+                                    4:lambda x,y,world : Marxinium(world,x,y, False),
+                                    5:lambda x,y,world : NokiaPhonium(world,x,y, False),
+                                    6:lambda x,y,world : HalfLiterKlokkium(world,x,y, False),
+                                  }
+
+    def use_inventory_item(self):
+        if self.map_inventory_to_placeable[self.selected_inventory_item]:
+            if isinstance(self.selected_tile, Air):
+                if self.inventory.inventory[ItemType(self.selected_inventory_item + 1)].amount > 0:
+                    self.inventory.inventory[ItemType(self.selected_inventory_item + 1)].amount -= 1
+                    x = self.selected_tile.x
+                    y = self.selected_tile.y
+                    block = self.map_inventory_to_consturcter[self.selected_inventory_item](x, y, self.world)
+                    if block is not None:
+                        self.world.tile_matrix[x][y] = block
     def eat(self):
         if self.inventory.inventory[ItemType.WHEAT].amount > 0:
             self.hunger_bar.eat()

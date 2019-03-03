@@ -78,6 +78,7 @@ class Tile(ABC):
                 self.fallcounter = 0
                 if not self.world.get_tile_at_indices(self.x, self.y + 1).can_support():
                     self.world.set_tile_at_indices(self.x, self.y, self.world.get_tile_at_indices(self.x, self.y + 1))
+                    self.world.get_tile_at_indices(self.x, self.y).y -= 1
                     self.y += 1
                     self.world.set_tile_at_indices(self.x, self.y, self)
                     return True
