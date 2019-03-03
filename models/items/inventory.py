@@ -18,7 +18,7 @@ class Inventory(object):
     def init_inventory():
         inventory = {}
         for item_type in ItemType:
-            inventory[item_type] = InventoryItem(item_type, 0)
+            inventory[item_type] = InventoryItem(item_type, 100)
         inventory[ItemType.SEEDS].amount += 1
         return inventory
 
