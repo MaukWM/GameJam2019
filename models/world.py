@@ -13,7 +13,6 @@ import bisect
 import math
 #values related to falling blocks
 ADDSTAB_CUTOFF = 0.1
-ROWS_UPDATED_PER_FRAME = 20
 # These values are from above
 DIRT_START = 20
 STONE_START = 35
@@ -37,7 +36,7 @@ RATIO_MAX = 1
 class World(object):
     falling_tiles = []
 
-    def __init__(self, width, height):
+    def __init__(self, width, height, rows_updated_per_frame):
         """
         :param width: Width in tiles
         :param height: Height in tiles
@@ -47,6 +46,7 @@ class World(object):
         self.height = height
         self.row_counter = height - 1
         self.growing_wheat = set()
+        self.rows_updated_per_frame = rows_updated_per_frame
 
         from models.tiles.wheat_tile import Wheat
         self.tile_matrix[10][19] = Wheat(self, 10, 19)
@@ -222,7 +222,7 @@ class World(object):
 
     def update_should_fall(self):
         #for row in range(self.height - 1, 0, -1):
-        for i in range(ROWS_UPDATED_PER_FRAME):
+        for i in range(self.rows_updated_per_frame):
             for cell in range(self.width):
                 self.get_tile_at_indices(cell, self.row_counter - 1).reset_stability()
             for cell in range(self.width):

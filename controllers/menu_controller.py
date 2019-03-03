@@ -8,20 +8,39 @@ from constants import SCREEN_HEIGHT, SCREEN_WIDTH, FRAME_RATE, DEV_MODE
 class MenuController(object):
 
     meme_mode = False
+    rows_updated_per_frame = 2
+    meteor_spawn_rate = 10
+
     title_1_surface = None
     title_2_surface = None
     meme_mode_text = None
+    speed_setting_text = None
+    speed_setting_slow = None
+    speed_setting_medium = None
+    speed_setting_fast = None
+    speed_setting_value = None
+    difficulty_text = None
+    difficulty_easy = None
+    difficulty_medium = None
+    difficulty_hard = None
+    difficulty_value = None
     start_text = None
     help_text = None
     help_enabled = False
-    meme_mode_checkbox = pygame.image.load('assets/graphics/menu/unchecked.png')
+    meme_mode_checkbox = pygame.transform.scale(pygame.image.load('assets/graphics/menu/unchecked.png'), (64, 64))
 
     MENU_ITEM_X = 520
     MENU_ITEM_WIDTH = 215
     MENU_ITEM_HEIGHT = 70
 
-    MENU_ITEM_HELP_Y = 380
-    MENU_ITEM_START_Y = 480
+    MENU_ITEM_MEME_MODE_Y = 140
+
+    MENU_ITEM_SPEED_Y = 220
+
+    MENU_ITEM_DIFFICULTY_Y = 300
+
+    MENU_ITEM_HELP_Y = 500
+    MENU_ITEM_START_Y = 600
 
     def __init__(self):
         # setup stuff
@@ -31,7 +50,7 @@ class MenuController(object):
         self.font = pygame.font.SysFont("Arial", 20)
         self.title_font = pygame.font.SysFont("Arial", 60)
         if DEV_MODE:
-            game_controller.GameController(self.window, self.meme_mode).run()
+            game_controller.GameController(self.window, self.meme_mode, self.rows_updated_per_frame, self.meteor_spawn_rate).run()
         self.setup()
 
     # Do all necessary setup
@@ -42,6 +61,21 @@ class MenuController(object):
 
         # meme mode checkbox
         self.meme_mode_text = self.title_font.render("meme mode", False, (255, 255, 255))
+
+        # computer speed setting
+        self.speed_setting_text = self.title_font.render("my computer is: ", False, (255, 255, 255))
+        self.speed_setting_slow = self.title_font.render("slow", False, (0, 0, 255))
+        self.speed_setting_medium = self.title_font.render("medium", False, (0, 0, 255))
+        self.speed_setting_fast = self.title_font.render("fast", False, (0, 0, 255))
+        self.speed_setting_value = self.speed_setting_medium
+
+        # difficulty setting
+        self.difficulty_text = self.title_font.render("difficulty: ", False, (255, 255, 255))
+        self.difficulty_easy = self.title_font.render("easy peasy", False, (0, 0, 255))
+        self.difficulty_medium = self.title_font.render("doable", False, (0, 0, 255))
+        self.difficulty_hard = self.title_font.render("OH JEEZ", False, (0, 0, 255))
+        self.difficulty_value = self.difficulty_medium
+
 
         # help
         self.help_text = self.title_font.render("HELP", False, (0, 255, 0))
@@ -64,24 +98,57 @@ class MenuController(object):
     def toggle_meme_mode(self):
         self.meme_mode = not self.meme_mode
         if self.meme_mode:
-            self.meme_mode_checkbox = pygame.image.load('assets/graphics/menu/checked.png')
+            self.meme_mode_checkbox = pygame.transform.scale(pygame.image.load('assets/graphics/menu/checked.png'), (64, 64))
 
         else:
-            self.meme_mode_checkbox = pygame.image.load('assets/graphics/menu/unchecked.png')
-            self.window.blit(self.meme_mode_checkbox, (420, 180))
+            self.meme_mode_checkbox = pygame.transform.scale(pygame.image.load('assets/graphics/menu/unchecked.png'), (64, 64))
+
+    def toggle_speed_setting(self):
+        if self.rows_updated_per_frame == 5:
+            # toggle to medium
+            self.rows_updated_per_frame = 10
+            self.speed_setting_value = self.speed_setting_medium
+        elif self.rows_updated_per_frame == 10:
+            # toggle to fast
+            self.rows_updated_per_frame = 20
+            self.speed_setting_value = self.speed_setting_fast
+        else: # current setting is fast
+            # toggle to slow
+            self.rows_updated_per_frame = 5
+            self.speed_setting_value = self.speed_setting_slow
+
+    def toggle_difficulty(self):
+        if self.meteor_spawn_rate == 10:
+            # toggle to medium
+            self.meteor_spawn_rate = 50
+            self.difficulty_value = self.difficulty_medium
+        elif self.meteor_spawn_rate == 50:
+            # toggle to hard
+            self.meteor_spawn_rate = 100
+            self.difficulty_value = self.difficulty_hard
+        else: # current setting is hard
+            # toggle to easy
+            self.meteor_spawn_rate = 10
+            self.difficulty_value = self.difficulty_easy
 
     def handle_mouse(self, event):
         if event.button == 1:
             mouse_pos = pygame.mouse.get_pos()
             x, y = int(mouse_pos[0]), int(mouse_pos[1])
             if 420 <= x <= 420+109:
-                if 180 <= y <= 180+109:
+                if self.MENU_ITEM_MEME_MODE_Y <= y <= self.MENU_ITEM_MEME_MODE_Y+109:
                     self.toggle_meme_mode()
+            if 730 <= x <= 1280:
+                if self.MENU_ITEM_SPEED_Y < y < self.MENU_ITEM_SPEED_Y + 100:
+                    self.toggle_speed_setting()
+            if 680 <= x <= 1280:
+                if self.MENU_ITEM_DIFFICULTY_Y < y < self.MENU_ITEM_DIFFICULTY_Y + 100:
+                    self.toggle_difficulty()
             # Check menu items
             if self.MENU_ITEM_X <= x <= self.MENU_ITEM_X + self.MENU_ITEM_WIDTH:
                 # Start button
                 if self.MENU_ITEM_START_Y <= y <= self.MENU_ITEM_START_Y + self.MENU_ITEM_HEIGHT:
-                    game_controller.GameController(self.window, self.meme_mode).run()
+                    game_controller.GameController(self.window, self.meme_mode, self.rows_updated_per_frame, self.meteor_spawn_rate).run()
                     self.setup()
                 # Help button
                 if self.MENU_ITEM_HELP_Y <= y <= self.MENU_ITEM_HELP_Y + self.MENU_ITEM_HEIGHT:
@@ -105,10 +172,19 @@ class MenuController(object):
         self.window.blit(self.title_1_surface, (330, 10))
         self.window.blit(self.title_2_surface, (380, 70))
 
-        self.window.blit(self.meme_mode_checkbox, (420, 180))
-        self.window.blit(self.meme_mode_text, (550, 200))
+        # meme mode
+        self.window.blit(self.meme_mode_checkbox, (420, self.MENU_ITEM_MEME_MODE_Y))
+        self.window.blit(self.meme_mode_text, (490, self.MENU_ITEM_MEME_MODE_Y - 10))
 
-        self.window.blit(self.meme_mode_checkbox, (420, 180))
+        # speed setting
+        speed_item_x = 300
+        self.window.blit(self.speed_setting_text, (speed_item_x, self.MENU_ITEM_SPEED_Y))
+        self.window.blit(self.speed_setting_value, (speed_item_x + 430, self.MENU_ITEM_SPEED_Y))
+
+        # difficulty setting
+        difficulty_item_x = 440
+        self.window.blit(self.difficulty_text, (difficulty_item_x, self.MENU_ITEM_DIFFICULTY_Y))
+        self.window.blit(self.difficulty_value, (difficulty_item_x + 240, self.MENU_ITEM_DIFFICULTY_Y))
 
         pygame.draw.rect(self.window, (0, 0, 0), (self.MENU_ITEM_X, self.MENU_ITEM_HELP_Y, self.MENU_ITEM_WIDTH, self.MENU_ITEM_HEIGHT))
         self.window.blit(self.help_text, (550, self.MENU_ITEM_HELP_Y))
