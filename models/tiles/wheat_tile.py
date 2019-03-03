@@ -6,6 +6,8 @@ from constants import TILE_SIZE_IN_PIXELS
 import pygame
 from models.items.item_types import ItemType
 
+AIR_UNDERGROUND_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/background.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
+
 WHEAT_SPRITES = [
     pygame.transform.scale(pygame.image.load('assets/graphics/wheat/wheat_0.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
     pygame.transform.scale(pygame.image.load('assets/graphics/wheat/wheat_1.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
@@ -65,6 +67,8 @@ class Wheat(Tile):
     def draw(self, surface, camera_y):
         drawn_sprite = min(int(self.growth_level*len(WHEAT_SPRITES)), len(WHEAT_SPRITES)-1)
         x, y = self.x * TILE_SIZE_IN_PIXELS, self.y * TILE_SIZE_IN_PIXELS - camera_y
+        if self.y >= 20:
+            surface.blit(AIR_UNDERGROUND_SPRITE, (x, y))
         surface.blit(WHEAT_SPRITES[drawn_sprite], (x, y))
 
     def grow_step(self):
