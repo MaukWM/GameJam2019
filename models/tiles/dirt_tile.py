@@ -8,10 +8,11 @@ DIRT_SPRITE_WITH_GRASS = pygame.transform.scale(pygame.image.load('assets/graphi
 
 
 class Dirt(Tile):
-    def __init__(self, world, x, y, is_grass: bool=False):
+    def __init__(self, world, x, y, is_grass: bool=False, solid: bool=True):
         super().__init__(world, x, y)
         self.is_grass = is_grass
         self.item_type = ItemType.DIRT
+        self.solid = solid
 
     def is_solid(self):
         return True

@@ -10,10 +10,11 @@ MARXINIUM_BLOCK_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphi
 
 class Marxinium(Tile):
 
-    def __init__(self, world, x, y, ore_bool=True):
+    def __init__(self, world, x, y, ore_bool=True, solid: bool=True):
         super().__init__(world, x, y)
         self.item_type = ItemType.MARXINIUM
         self.ore_bool = ore_bool
+        self.solid = solid
 
     def get_strength(self):
         return 1

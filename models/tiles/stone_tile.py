@@ -14,9 +14,10 @@ class Stone(Tile):
     def get_resistance(self):
         return 10
 
-    def __init__(self, world, x, y):
+    def __init__(self, world, x, y, solid: bool=True):
         super().__init__(world, x, y)
         self.item_type = ItemType.STONE
+        self.solid = solid
 
     def get_strength(self):
         return 10.0

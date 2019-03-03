@@ -12,6 +12,7 @@ class Tile(ABC):
         self.strength = self.get_initial_strength()
         self.health = 1
         self.fallcounter = 0
+        self.solid = True
 
     def can_support(self):
         return True

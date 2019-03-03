@@ -12,10 +12,11 @@ class NokiaPhonium(Tile):
     def get_resistance(self):
         return 50.0
 
-    def __init__(self, world, x, y, ore_bool=True):
+    def __init__(self, world, x, y, ore_bool=True, solid: bool=True):
         super().__init__(world, x, y)
         self.item_type = ItemType.NOKIA_PHONIUM
         self.ore_bool = ore_bool
+        self.solid = solid
 
     def get_strength(self):
         return 50.0

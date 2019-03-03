@@ -13,10 +13,11 @@ class Jeltisnium(Tile):
     def get_resistance(self):
         return 5.0
 
-    def __init__(self, world, x, y, ore_bool=True):
+    def __init__(self, world, x, y, ore_bool=True, solid: bool=True):
         super().__init__(world, x, y)
         self.item_type = ItemType.JELTSIUM
         self.ore_bool = ore_bool
+        self.solid = solid
 
     def get_strength(self):
         return 1

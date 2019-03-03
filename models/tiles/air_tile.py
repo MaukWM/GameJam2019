@@ -2,6 +2,7 @@ from models.tiles.tile import Tile
 
 
 class Air(Tile):
+    solid = False
 
     def can_support(self):
         return False
@@ -13,7 +14,7 @@ class Air(Tile):
         pass
 
     def is_solid(self):
-        return False
+        return self.solid
 
     def check_stability(self):
         return False
