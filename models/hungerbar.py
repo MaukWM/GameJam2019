@@ -7,11 +7,11 @@ class HungerBar:
     def __init__(self, player):
         self.hunger = 1000
         self.font = pygame.font.SysFont("Arial", 30, True)
-        self.txt_surface  =self.font.render("Hunger: " + str(int(self.hunger)), True, (0, 255, 0))
+        self.txt_surface = self.font.render("Hunger: " + str(int(self.hunger)), True, (0, 255, 0))
         self.player = player
 
     def step(self):
-        self.hunger -= 1
+        self.hunger -= 0.05
         if self.hunger > 500:
             self.txt_surface = self.font.render("Hunger: " + str(int(self.hunger)), True, (0, 255, 0))
         elif self.hunger > 250:
