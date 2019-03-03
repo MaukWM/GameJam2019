@@ -59,6 +59,10 @@ class GameController(object):
             self.game.player.change_item_selected(5)
         elif event_key == pygame.K_7:
             self.game.player.change_item_selected(6)
+        elif event_key == pygame.K_8:
+            self.game.player.change_item_selected(7)
+        elif event_key == pygame.K_9:
+            self.game.player.change_item_selected(8)
 
 
     # Handle all pygame events

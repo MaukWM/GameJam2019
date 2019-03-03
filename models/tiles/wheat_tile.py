@@ -7,7 +7,12 @@ from models.items.item_types import ItemType
 
 WHEAT_SPRITES = [
     pygame.transform.scale(pygame.image.load('assets/graphics/wheat_0.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
-    pygame.transform.scale(pygame.image.load('assets/graphics/wheat_1.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
+    pygame.transform.scale(pygame.image.load('assets/graphics/wheat_1.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
+    pygame.transform.scale(pygame.image.load('assets/graphics/wheat_2.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
+    pygame.transform.scale(pygame.image.load('assets/graphics/wheat_3.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
+    pygame.transform.scale(pygame.image.load('assets/graphics/wheat_4.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
+    pygame.transform.scale(pygame.image.load('assets/graphics/wheat_5.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
+    pygame.transform.scale(pygame.image.load('assets/graphics/wheat_6.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
 
 ]
 
@@ -44,7 +49,7 @@ class Wheat(Tile):
             self.damage(1000000000)
 
     def get_strength(self):
-        return 1
+        return 0.0
 
     def is_solid(self):
         return False

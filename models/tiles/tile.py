@@ -38,7 +38,7 @@ class Tile(ABC):
         return self.strength
 
     def damage(self, amount):
-        if self.get_strength() == 0.0:
+        if self.get_resistance() == 0:
             return False
         self.health -= amount / self.get_resistance()
         if self.health <= 0:

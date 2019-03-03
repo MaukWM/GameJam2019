@@ -9,8 +9,8 @@ class ItemType(Enum):
     MARXINIUM = 5
     NOKIA_PHONIUM = 6
     HALF_LITER_KLOKKIUM = 7
-    WHEAT = 8
-    SEEDS = 9
+    SEEDS = 8
+    WHEAT = 9
 
 NAMES = dict()
 NAMES[ItemType.DIRT] = "Dirt"

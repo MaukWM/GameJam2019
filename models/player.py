@@ -17,6 +17,7 @@ from models.tiles.leninium_tile import Leninium
 from models.tiles.marxinium_tile import Marxinium
 from models.tiles.nokia_phonium_tile import NokiaPhonium
 from models.tiles.stone_tile import Stone
+from models.tiles.wheat_tile import Wheat
 from models.world import DIRT_START
 from models.pickaxe import Pickaxe
 from models.items.item_types import PATHS, ItemType  # TODO: Add meme path
@@ -25,7 +26,7 @@ PLAYER_WIDTH, PLAYER_HEIGHT = 28, 60
 PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player.png'),
                                        (PLAYER_WIDTH, PLAYER_HEIGHT))
 
-DIFFERENT_ITEM_NUMBER = 7
+DIFFERENT_ITEM_NUMBER = 8
 
 
 class Player(object):
@@ -68,7 +69,7 @@ class Player(object):
             can_move_right = self.can_move_to_relative_tile_x(0, x=new_x + PLAYER_WIDTH, y=self.y)
 
             # Compute the tile index of the tile containing the right side of the player
-            x_tile_right = ((new_x + PLAYER_WIDTH) // TILE_SIZE_IN_PIXELS)*TILE_SIZE_IN_PIXELS
+            x_tile_right = ((new_x + PLAYER_WIDTH) // TILE_SIZE_IN_PIXELS) * TILE_SIZE_IN_PIXELS
             if not can_move_right:
                 # If we can't, keep the player at the edge of the tile we're in at the new timestep
                 new_x = x_tile_right - PLAYER_WIDTH
@@ -90,7 +91,7 @@ class Player(object):
             can_move_down = self.can_move_to_relative_tile_y(0, x=new_x, y=new_y + PLAYER_HEIGHT)
 
             # Compute the tile index of the tile containing the bottom side of the player
-            y_tile_bottom = ((new_y + PLAYER_HEIGHT) // TILE_SIZE_IN_PIXELS)*TILE_SIZE_IN_PIXELS
+            y_tile_bottom = ((new_y + PLAYER_HEIGHT) // TILE_SIZE_IN_PIXELS) * TILE_SIZE_IN_PIXELS
             if not can_move_down:
                 # Reset jump
                 self.can_jump = True
@@ -140,7 +141,6 @@ class Player(object):
         elif isinstance(entity, Meteor):
             entity_box = (entity.x, entity.y, entity.width, entity.height)
             if self.check_overlap(player_box, entity_box):
-
                 # handle impact from meteor with player
                 self.game.entities.append(Explosion(entity.x, entity.y, entity.width))
                 self.health_bar.take_damage(entity.size * 30)
@@ -194,9 +194,8 @@ class Player(object):
 
         # Compute the number of tiles that the player spans over the x-axis
         # The small offset is added to avoid one-off errors. I'm vewy sowwy UwU - Gewwyfwap
-        y_range = int((y + PLAYER_HEIGHT - 1e-5)//TILE_SIZE_IN_PIXELS - tile_y)
+        y_range = int((y + PLAYER_HEIGHT - 1e-5) // TILE_SIZE_IN_PIXELS - tile_y)
         y_range += 1
-
 
         # Check the tiles on all checked delta y
         for dy in range(y_range):
@@ -225,7 +224,7 @@ class Player(object):
 
         # Compute the number of tiles that the player spans over the x-axis
         # The small offset is added to avoid one-off errors. I'm vewy sowwy UwU - Gewwyfwap
-        x_range = int((x + PLAYER_WIDTH - 1e-5)//TILE_SIZE_IN_PIXELS - tile_x)
+        x_range = int((x + PLAYER_WIDTH - 1e-5) // TILE_SIZE_IN_PIXELS - tile_x)
         x_range += 1
 
         for dx in range(x_range):
@@ -248,10 +247,11 @@ class Player(object):
         """
         camera_y = int(self.y - SCREEN_HEIGHT // 2)
         x, y = mouse_x, mouse_y + camera_y
-        tile_x, tile_y = x//TILE_SIZE_IN_PIXELS, y//TILE_SIZE_IN_PIXELS
+        tile_x, tile_y = x // TILE_SIZE_IN_PIXELS, y // TILE_SIZE_IN_PIXELS
 
-        ptile_x_left, ptile_y_top = self.x//TILE_SIZE_IN_PIXELS, self.y//TILE_SIZE_IN_PIXELS
-        ptile_x_right, ptile_y_bot = (self.x + PLAYER_WIDTH-0.01)//TILE_SIZE_IN_PIXELS, (self.y + PLAYER_HEIGHT - 0.01)//TILE_SIZE_IN_PIXELS
+        ptile_x_left, ptile_y_top = self.x // TILE_SIZE_IN_PIXELS, self.y // TILE_SIZE_IN_PIXELS
+        ptile_x_right, ptile_y_bot = (self.x + PLAYER_WIDTH - 0.01) // TILE_SIZE_IN_PIXELS, (
+                    self.y + PLAYER_HEIGHT - 0.01) // TILE_SIZE_IN_PIXELS
 
         dist_x_1 = abs(ptile_x_left - tile_x)
         dist_x_2 = abs(ptile_x_right - tile_x)
@@ -288,9 +288,10 @@ class Player(object):
                     self.game.entities.append(
                         DroppedItem(self.game, item_type, x_tile, y_tile, meme_mode=self.game.memes_enabled))
         else:
-            self.game.entities.append(DroppedItem(self.game, tile.item_type, x_tile, y_tile, meme_mode=self.game.memes_enabled))
+            self.game.entities.append(
+                DroppedItem(self.game, tile.item_type, x_tile, y_tile, meme_mode=self.game.memes_enabled))
 
-    #kan gebruikt worden als je een scrollwheel gebruikt
+    # kan gebruikt worden als je een scrollwheel gebruikt
     def increment_item_selected(self, bool):
         if bool:
             self.change_item_selected(self.selected_inventory_item + 1)
@@ -300,23 +301,25 @@ class Player(object):
     def change_item_selected(self, number):
         self.selected_inventory_item = number % DIFFERENT_ITEM_NUMBER
 
-    map_inventory_to_placeable = {0:True,
-                                 1:True,
-                                 2:True,
-                                 3:True,
-                                 4:True,
-                                 5:True,
-                                 6:True,
-                                 }
-
-    map_inventory_to_consturcter = {0:lambda x,y,world : Dirt(world,x,y,False),
-                                    1:lambda x,y,world : Stone(world,x,y),
-                                    2:lambda x,y,world : Jeltisnium(world,x,y, False),
-                                    3:lambda x,y,world : Leninium(world,x,y, False),
-                                    4:lambda x,y,world : Marxinium(world,x,y, False),
-                                    5:lambda x,y,world : NokiaPhonium(world,x,y, False),
-                                    6:lambda x,y,world : HalfLiterKlokkium(world,x,y, False),
+    map_inventory_to_placeable = {0: True,
+                                  1: True,
+                                  2: True,
+                                  3: True,
+                                  4: True,
+                                  5: True,
+                                  6: True,
+                                  7: True,
                                   }
+
+    map_inventory_to_consturcter = {0: lambda x, y, world: Dirt(world, x, y, False),
+                                    1: lambda x, y, world: Stone(world, x, y),
+                                    2: lambda x, y, world: Jeltisnium(world, x, y, False),
+                                    3: lambda x, y, world: Leninium(world, x, y, False),
+                                    4: lambda x, y, world: Marxinium(world, x, y, False),
+                                    5: lambda x, y, world: NokiaPhonium(world, x, y, False),
+                                    6: lambda x, y, world: HalfLiterKlokkium(world, x, y, False),
+                                    7: lambda x, y, world: Wheat(world, x, y),
+                                    }
 
     def use_inventory_item(self):
         if self.map_inventory_to_placeable[self.selected_inventory_item]:
@@ -328,6 +331,7 @@ class Player(object):
                     block = self.map_inventory_to_consturcter[self.selected_inventory_item](x, y, self.world)
                     if block is not None:
                         self.world.tile_matrix[x][y] = block
+
     def eat(self):
         if self.inventory.inventory[ItemType.WHEAT].amount > 0:
             self.hunger_bar.eat()
