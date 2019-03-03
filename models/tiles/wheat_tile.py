@@ -51,7 +51,6 @@ class Wheat(Tile):
 
     def draw(self, surface, camera_y):
         drawn_sprite = min(int(self.growth_level*len(WHEAT_SPRITES)), len(WHEAT_SPRITES)-1)
-        print(drawn_sprite)
         x, y = self.x * TILE_SIZE_IN_PIXELS, self.y * TILE_SIZE_IN_PIXELS - camera_y
         surface.blit(WHEAT_SPRITES[drawn_sprite], (x, y))
 
