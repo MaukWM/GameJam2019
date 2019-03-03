@@ -57,6 +57,9 @@ class GameController(object):
                 self.held_mouse_buttons.add(event.button)
 
             if event.type == pygame.MOUSEBUTTONUP and event.button in self.held_mouse_buttons:
+                if event.button == 1:
+                    # LMB
+                    self.game.player.is_mining = False
                 self.held_mouse_buttons.remove(event.button)
 
         for key in self.held_keys:
@@ -96,9 +99,9 @@ class GameController(object):
             pygame.display.update()
 
     def handle_button_held(self, button):
-
         if button == 1:
             # LMB
+            self.game.player.is_mining = True
             self.game.player.mine()
 
         if button == 3:

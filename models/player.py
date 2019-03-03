@@ -32,6 +32,8 @@ PLAYER_LEGS_WALKING_FRAMES = [
                            (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2))
 ]
 
+PICKAXE = pygame.image.load('assets/graphics/pickaxe.png')
+
 PLAYER_DAMAGE = 0.05
 
 
@@ -45,6 +47,9 @@ class Player(object):
         self.x_speed = 0
         self.y_speed = 0
         self.walking_state = 0
+        self.pickaxe_frame_counter = 0
+        self.pickaxe_sprite = PICKAXE
+        self.is_mining = False
         self.highest_reached_y = DIRT_START - 2  # -2 because then it works properly
         self.can_jump = True
         self.selected_tile = None
@@ -182,8 +187,22 @@ class Player(object):
                 surface.blit(pygame.transform.flip(PLAYER_LEGS_WALKING_FRAMES[self.walking_state // 7], True, False),
                          (self.x, self.y - camera_y))
 
+    def draw_pickaxe(self, surface, camera_y):
+        if self.is_mining:
+            self.pickaxe_frame_counter = (self.pickaxe_frame_counter + 1) % 20
+            if self.pickaxe_frame_counter % 5 == 0:
+                if self.pickaxe_sprite == PICKAXE:
+                    self.pickaxe_sprite = pygame.transform.rotate(self.pickaxe_sprite, -40)
+                else:
+                    self.pickaxe_sprite = PICKAXE
+        if self.can_jump:
+            surface.blit(self.pickaxe_sprite, (self.x + 27, self.y - camera_y + 14))
+        else:
+            surface.blit(self.pickaxe_sprite, (self.x + 27, self.y - camera_y - 16))
+
     def draw(self, surface, camera_y):
         self.draw_player(surface, camera_y)
+        self.draw_pickaxe(surface, camera_y)
         self.inventory.draw(surface)
         self.health_bar.draw(surface)
         if self.selected_tile is not None:
