@@ -293,11 +293,11 @@ class Player(object):
 
     map_inventory_to_consturcter = {0:lambda x,y,world : Dirt(world,x,y,False),
                                     1:lambda x,y,world : Stone(world,x,y),
-                                    2:lambda x,y,world : Jeltisnium(world,x,y),
-                                    3:lambda x,y,world : Leninium(world,x,y),
-                                    4:lambda x,y,world : Marxinium(world,x,y),
-                                    5:lambda x,y,world : NokiaPhonium(world,x,y),
-                                    6:lambda x,y,world : HalfLiterKlokkium(world,x,y),
+                                    2:lambda x,y,world : Jeltisnium(world,x,y, False),
+                                    3:lambda x,y,world : Leninium(world,x,y, False),
+                                    4:lambda x,y,world : Marxinium(world,x,y, False),
+                                    5:lambda x,y,world : NokiaPhonium(world,x,y, False),
+                                    6:lambda x,y,world : HalfLiterKlokkium(world,x,y, False),
                                   }
 
     def use_inventory_item(self):
