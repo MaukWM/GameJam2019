@@ -252,6 +252,12 @@ class World(object):
                 addstab *= self.get_tile_at_indices(x + i, y - 1).get_strength()
                 i -= 1
 
+    def remove_falling_tile(self, tile):
+        try:
+            self.falling_tiles.remove(tile)
+        except:
+            pass
+
     def step(self):
         self.wheat_step()
         self.update_should_fall()
