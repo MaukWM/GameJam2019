@@ -44,6 +44,13 @@ class Pickaxe():
                 return False
         return True
 
+    def next_material_level(self):
+        for i in range(0, len(self.material_list) - 1):
+            if self.material == ItemType.HALF_LITER_KLOKKIUM:
+                return None
+            if self.material_list[i] == self.material:
+                return self.material_list[i + 1]
+
     def upgrade(self):
         for i in range(0, len(self.material_list) - 1):
             if self.material == ItemType.HALF_LITER_KLOKKIUM:

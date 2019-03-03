@@ -10,6 +10,14 @@ class ItemType(Enum):
     NOKIA_PHONIUM = 6
     HALF_LITER_KLOKKIUM = 7
 
+NAMES = dict()
+NAMES[ItemType.DIRT] = "Dirt"
+NAMES[ItemType.STONE] = "Stone"
+NAMES[ItemType.JELTSIUM] = "Jeltisium"
+NAMES[ItemType.MARXINIUM] = "Marxinium"
+NAMES[ItemType.LENINIUM] = "Leninium"
+NAMES[ItemType.NOKIA_PHONIUM] = "Nokia Phonium"
+NAMES[ItemType.HALF_LITER_KLOKKIUM] = "Half Liter Klokkium"
 
 SCORES = dict()
 SCORES[ItemType.DIRT] = 0

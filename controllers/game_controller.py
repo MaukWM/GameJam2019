@@ -24,6 +24,9 @@ class GameController(object):
             # end the program, close the window
             pygame.quit()
             sys.exit()
+        if event_key == pygame.K_u:
+            if self.game.player.pickaxe.is_upgradeable():
+                self.game.player.pickaxe.upgrade()
 
     def handle_key_held(self, event_key):
 
@@ -38,11 +41,6 @@ class GameController(object):
         # TODO: REMOVE THESE HACKS
         if event_key == pygame.K_RIGHT:
             self.game.player.x_speed = 2
-
-        if event_key == pygame.K_u:
-            if self.game.player.pickaxe.is_upgradeable():
-                self.game.player.pickaxe.upgrade()
-
 
     # Handle all pygame events
     def handle_events(self):
