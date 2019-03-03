@@ -124,6 +124,10 @@ class Player(object):
         # Realistic friction ;P
         self.x_speed *= 0.8
 
+        # check if in block
+        if not self.can_move_to_relative_tile_x(0, self.x, self.y):
+            self.health_bar.take_damage(10000)
+
     def check_entity_collisions(self):
         for entity in self.game.entities:
             if (self.x - entity.x) < 4 and (self.y - entity.y) < 4:
