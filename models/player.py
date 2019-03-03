@@ -240,7 +240,7 @@ class Player(object):
     def jump(self):
         if self.can_jump:
             self.can_jump = False
-            self.y_speed -= 6.0
+            self.y_speed -= 5.0
 
     def find_selected_tile(self, mouse_x, mouse_y):
         """
@@ -296,11 +296,11 @@ class Player(object):
                 DroppedItem(self.game, tile.item_type, x_tile, y_tile, meme_mode=self.game.memes_enabled))
 
     # kan gebruikt worden als je een scrollwheel gebruikt
-    def increment_item_selected(self, bool):
-        if bool:
-            self.change_item_selected(self.selected_inventory_item + 1)
-        else:
-            self.change_item_selected(self.selected_inventory_item + 1)
+    def increment_item_selected(self):
+        self.change_item_selected((self.selected_inventory_item + 1) % DIFFERENT_ITEM_NUMBER)
+
+    def decrement_item_selected(self):
+        self.change_item_selected((self.selected_inventory_item - 1) % DIFFERENT_ITEM_NUMBER)
 
     def change_item_selected(self, number):
         self.selected_inventory_item = number % DIFFERENT_ITEM_NUMBER
