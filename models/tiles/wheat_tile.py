@@ -1,3 +1,4 @@
+from models.tiles.air_tile import Air
 from models.tiles.dirt_tile import Dirt
 from models.tiles.half_liter_klokkium_tile import HalfLiterKlokkium
 from models.tiles.tile import Tile
@@ -67,6 +68,14 @@ class Wheat(Tile):
         surface.blit(WHEAT_SPRITES[drawn_sprite], (x, y))
 
     def grow_step(self):
+        tile_above = self.world.get_tile_at_indices(self.x, self.y-1)
+        if tile_above is not None and tile_above.isfalling:
+            self.world.destroy_tile(self)
+
+        tile_below = self.world.get_tile_at_indices(self.x, self.y + 1)
+        if tile_below is not None and tile_below.isfalling or isinstance(tile_below, Air):
+            self.world.destroy_tile(self)
+
         self.growth_level += self.growing_speed
         self.growth_level = min(1.0, self.growth_level)
 
