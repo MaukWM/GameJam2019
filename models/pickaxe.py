@@ -52,12 +52,17 @@ class Pickaxe():
                 return self.material_list[i + 1]
 
     def upgrade(self):
+        if not self.is_upgradeable():
+            return False
         if self.material == ItemType.HALF_LITER_KLOKKIUM:
             return False
         for i in range(0, len(self.material_list) - 1):
             if self.material_list[i] == self.material:
-                self.material = self.material_list[i + 1]
+                player_inventory = self.player.inventory.inventory
                 self.strength = self.item_to_strength[self.material]
+                for cost_item in self.cost_to_upgrade_from[self.material]:
+                    player_inventory[cost_item].amount -= self.cost_to_upgrade_from[self.material][cost_item]
+                self.material = self.material_list[i + 1]
                 return True
         return False
 
