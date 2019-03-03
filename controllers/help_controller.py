@@ -62,8 +62,8 @@ class HelpController(object):
 
     def setup(self):
         # draws the title
-        self.title_1_surface = self.title_font.render("use a,d or <-,-> to move left and right", False, (255, 255, 255))
-        self.title_2_surface = self.title_font.render("use w,^ or space to jump", False, (255, 255, 255))
+        self.title_1_surface = self.title_font.render("use a,d or ←,→ to move left and right", False, (255, 255, 255))
+        self.title_2_surface = self.title_font.render("use w,↑ or space to jump", False, (255, 255, 255))
         self.title_3_surface = self.title_font.render("use left mouse to break blocks", False, (255, 255, 255))
         self.title_4_surface = self.title_font.render("use right mouse to place blocks", False, (255, 255, 255))
         self.title_5_surface = self.title_font.render("    with shift to place support beams", False, (255, 255, 255))
