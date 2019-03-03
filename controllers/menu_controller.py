@@ -46,7 +46,7 @@ class MenuController(object):
         gc = game_controller.GameController(self.window, self.meme_mode, self.rows_updated_per_frame,
                                             self.meteor_spawn_rate, self.name)
         gc.run()
-        death_controller.DeathController(gc.game.score, self.window).run()
+        death_controller.DeathController(gc.game.score, self.window, self.name).run()
 
     def __init__(self, name):
         # setup stuff
