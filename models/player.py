@@ -22,7 +22,6 @@ from models.items.item_types import PATHS, ItemType  # TODO: Add meme path
 
 PLAYER_WIDTH, PLAYER_HEIGHT = 28, 60
 PLAYER_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/player.png'),
-                                       (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS * 2))
                                        (PLAYER_WIDTH, PLAYER_HEIGHT))
 
 DIFFERENT_ITEM_NUMBER = 7
