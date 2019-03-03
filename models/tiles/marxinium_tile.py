@@ -11,14 +11,14 @@ MARXINIUM_BEAM_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphic
 
 class Marxinium(Tile):
 
+    def get_initial_strength(self):
+        return 0.5
+
     def __init__(self, world, x, y, ore_bool=True, solid: bool=True):
         super().__init__(world, x, y)
         self.item_type = ItemType.MARXINIUM
         self.ore_bool = ore_bool
         self.solid = solid
-
-    def get_strength(self):
-        return 1
 
     def get_resistance(self):
         return 10.0
