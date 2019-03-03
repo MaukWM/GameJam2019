@@ -12,7 +12,16 @@ class MenuController(object):
     title_2_surface = None
     meme_mode_text = None
     start_text = None
+    help_text = None
+    help_enabled = False
     meme_mode_checkbox = pygame.image.load('assets/graphics/menu/unchecked.png')
+
+    MENU_ITEM_X = 520
+    MENU_ITEM_WIDTH = 215
+    MENU_ITEM_HEIGHT = 70
+
+    MENU_ITEM_HELP_Y = 380
+    MENU_ITEM_START_Y = 480
 
     def __init__(self):
         # setup stuff
@@ -34,16 +43,23 @@ class MenuController(object):
         # meme mode checkbox
         self.meme_mode_text = self.title_font.render("meme mode", False, (255, 255, 255))
 
+        # help
+        self.help_text = self.title_font.render("HELP", False, (0, 255, 0))
+
         # start
         self.start_text = self.title_font.render("START!", False, (0, 255, 0))
 
-
     # handle a pressed key event in the context of the game root
-    def handle_key_press(self, event_key):
+    @staticmethod
+    def handle_key_press(event_key):
         if event_key == pygame.K_ESCAPE:
             # end the program, close the window
             pygame.quit()
             sys.exit()
+
+    def toggle_help_screen(self):
+        self.help_enabled = not self.help_enabled
+        # TODO: display help menu
 
     def toggle_meme_mode(self):
         self.meme_mode = not self.meme_mode
@@ -54,17 +70,22 @@ class MenuController(object):
             self.meme_mode_checkbox = pygame.image.load('assets/graphics/menu/unchecked.png')
             self.window.blit(self.meme_mode_checkbox, (420, 180))
 
-    def handle_mouse(self):
-        mouse_pos = pygame.mouse.get_pos()
-        x, y = int(mouse_pos[0]), int(mouse_pos[1])
-        if 420 <= x <= 420+109:
-            if 180 <= y <= 180+109:
-                self.toggle_meme_mode()
-        # 520, 480, 210, 70
-        if 520 <= x <= 520+210:
-            if 480 <= y <= 480+70:
-                game_controller.GameController(self.window, self.meme_mode).run()
-                self.setup()
+    def handle_mouse(self, event):
+        if event.button == 1:
+            mouse_pos = pygame.mouse.get_pos()
+            x, y = int(mouse_pos[0]), int(mouse_pos[1])
+            if 420 <= x <= 420+109:
+                if 180 <= y <= 180+109:
+                    self.toggle_meme_mode()
+            # Check menu items
+            if self.MENU_ITEM_X <= x <= self.MENU_ITEM_X + self.MENU_ITEM_WIDTH:
+                # Start button
+                if self.MENU_ITEM_START_Y <= y <= self.MENU_ITEM_START_Y + self.MENU_ITEM_HEIGHT:
+                    game_controller.GameController(self.window, self.meme_mode).run()
+                    self.setup()
+                # Help button
+                if self.MENU_ITEM_HELP_Y <= y <= self.MENU_ITEM_HELP_Y + self.MENU_ITEM_HEIGHT:
+                    self.toggle_help_screen()
 
     # Handle all pygame events
     def handle_events(self):
@@ -75,8 +96,7 @@ class MenuController(object):
                 if event.type == pygame.KEYDOWN:
                     self.handle_key_press(event.key)
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    self.handle_mouse()
-
+                    self.handle_mouse(event)
 
     # Do all updates to the game state in this function
     def update_state(self):
@@ -90,9 +110,11 @@ class MenuController(object):
 
         self.window.blit(self.meme_mode_checkbox, (420, 180))
 
-        pygame.draw.rect(self.window, (0, 0, 0), (520, 480, 210, 70))
-        self.window.blit(self.start_text, (520, 480))
+        pygame.draw.rect(self.window, (0, 0, 0), (self.MENU_ITEM_X, self.MENU_ITEM_HELP_Y, self.MENU_ITEM_WIDTH, self.MENU_ITEM_HEIGHT))
+        self.window.blit(self.help_text, (550, self.MENU_ITEM_HELP_Y))
 
+        pygame.draw.rect(self.window, (0, 0, 0), (self.MENU_ITEM_X, self.MENU_ITEM_START_Y, self.MENU_ITEM_WIDTH, self.MENU_ITEM_HEIGHT))
+        self.window.blit(self.start_text, (520, self.MENU_ITEM_START_Y))
 
     def run(self):
         while True:
