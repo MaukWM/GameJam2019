@@ -46,7 +46,7 @@ PLAYER_LEGS_WALKING_FRAMES = [
 PICKAXE = pygame.image.load('assets/graphics/pickaxe.png')
 
 DIFFERENT_ITEM_NUMBER = 8
-FALL_DAMAGE_THRESHOLD = 10
+FALL_DAMAGE_THRESHOLD = 15
 FALL_DAMAGE_SCALING_FACTOR = 2.5
 
 
@@ -155,8 +155,14 @@ class Player(object):
         self.x_speed *= 0.8
 
         # check if in block
-        if not self.can_move_to_relative_tile_x(0, self.x, self.y):
-            self.health_bar.take_damage(10000)
+        tiles_in_self = self.tiles_in_player(self.x, self.y)
+        for tile in tiles_in_self:
+            if isinstance(tile, Dirt):
+                self.health_bar.take_damage(200)
+                self.world.set_tile_at_indices(tile.x, tile.y, Air(self.world, tile.x, tile.y))
+                self.world.remove_falling_tile(tile)
+            else:
+                self.health_bar.take_damage(10000)
 
     def check_entity_collisions(self):
         for entity in self.game.entities:
@@ -279,6 +285,37 @@ class Player(object):
                 return False
         # If we didn't encounter anything holding us back, we can move to this dx
         return True
+
+    def tiles_in_player(self, x=None, y=None):
+        """
+        Checks whether the player can actually move dx tiles from the given x and y
+        :param dx: Delta x. The difference in x position in tile coordinates
+        :param x: If filled in this parameter overrides the default x = self.x
+        :param y: If filled in this parameter overrides the default y = self.y
+        :return: Whether the player can stand at this dx without colliding
+        """
+        dx = 0
+        if x is None:
+            x = self.x
+
+        if y is None:
+            y = self.y
+
+        tile_x, tile_y = x // TILE_SIZE_IN_PIXELS, y // TILE_SIZE_IN_PIXELS
+
+        # Compute the number of tiles that the player spans over the x-axis
+        # The small offset is added to avoid one-off errors. I'm vewy sowwy UwU - Gewwyfwap
+        y_range = int((y + PLAYER_HEIGHT - 1e-5) // TILE_SIZE_IN_PIXELS - tile_y)
+        y_range += 1
+        result = []
+        # Check the tiles on all checked delta y
+        for dy in range(y_range):
+            tile = self.world.get_tile_at_indices(int(tile_x + dx), int(tile_y + dy))
+            if tile is None or tile.is_solid():
+                # We cannot pass through the map borders or solid blocks
+                result.append(tile)
+        # If we didn't encounter anything holding us back, we can move to this dx
+        return result
 
     def can_move_to_relative_tile_y(self, dy, x=None, y=None):
         """
