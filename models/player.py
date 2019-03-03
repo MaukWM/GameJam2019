@@ -222,7 +222,6 @@ class Player(object):
             surface.blit(self.pickaxe_sprite, (self.x + 27, self.y - camera_y - 16))
 
     def draw(self, surface, camera_y):
-        self.inventory.draw(surface, self.selected_inventory_item)
         self.draw_player(surface, camera_y)
         self.draw_pickaxe(surface, camera_y)
         self.inventory.draw(surface, self.selected_inventory_item)
