@@ -9,7 +9,7 @@ class GameController(object):
 
     def __init__(self, window, memes_enabled, rows_updated_per_frame, meteor_spawn_rate):
         # setup stuff
-        self.game = Game(SCREEN_WIDTH//TILE_SIZE_IN_PIXELS, 512, memes_enabled, rows_updated_per_frame, meteor_spawn_rate)
+        self.game = Game(SCREEN_WIDTH//TILE_SIZE_IN_PIXELS, 256, memes_enabled, rows_updated_per_frame, meteor_spawn_rate)
         self.window = window
         self.held_keys = set()
         self.held_mouse_buttons = set()

@@ -11,24 +11,25 @@ from constants import TILE_SIZE_IN_PIXELS, SCREEN_HEIGHT
 import random
 import bisect
 import math
+
 #values related to falling blocks
 ADDSTAB_CUTOFF = 0.02
 ROWS_UPDATED_PER_FRAME = 20
 # These values are from above
 DIRT_START = 20
-STONE_START = 35
-RESOURCE_START = 50
+STONE_START = 25
+RESOURCE_START = 30
 
 # Cap where the sigmoid function can decide the chance
 RESOURCE_CHANCE_CAP = 0.25
 
 # ratio peaks when resource is most common
 resource_ratio_peaks = [None] * 5
-resource_ratio_peaks[0] = [Jeltisnium, 0.15]
-resource_ratio_peaks[1] = [Marxinium, 0.25]
-resource_ratio_peaks[2] = [Leninium, 0.50]
-resource_ratio_peaks[3] = [NokiaPhonium, 0.75]
-resource_ratio_peaks[4] = [HalfLiterKlokkium, 0.95]
+resource_ratio_peaks[0] = [Jeltisnium, 0.05, 0.03]
+resource_ratio_peaks[1] = [Marxinium, 0.25, 0.05]
+resource_ratio_peaks[2] = [Leninium, 0.50, 0.07]
+resource_ratio_peaks[3] = [NokiaPhonium, 0.75, 0.07]
+resource_ratio_peaks[4] = [HalfLiterKlokkium, 0.95, 0.1]
 
 # to avoid magic numbers
 RATIO_MAX = 1
@@ -78,7 +79,7 @@ class World(object):
                 # Are we below where the stone starts and above where the resources start?
                 elif (y > STONE_START) and (y <= RESOURCE_START):
                     # Stone chance from sigmoid function
-                    stone_chance = self.sigmoid(10 * (y / height) - 5)
+                    stone_chance = self.sigmoid(10 * (y / height) - 2)
                     if random.uniform(0, 1) > stone_chance:
                         column.append(Dirt(self, x, y, False))
                     else:
@@ -87,7 +88,7 @@ class World(object):
                 # Are we below where the resources start?
                 elif y > RESOURCE_START:
                     # Resource chance is from sigmoid function
-                    resource_chance = self.sigmoid(10 * (y / height) - 7)
+                    resource_chance = self.sigmoid(10 * (y / height) - 3)
                     # To prevent suddenly everything being resources we cap where the sigmoid has influence
                     if resource_chance > RESOURCE_CHANCE_CAP:
                         # Here the resource chance becomes linear growing slowly
@@ -97,7 +98,7 @@ class World(object):
                         column.append(self.decide_resource(x, y, height))
                         continue
                     # If we don't spawn a resource, just spawn stone using sigmoid to decide the chance
-                    stone_chance = self.sigmoid(10 * (y / height) - 5)
+                    stone_chance = self.sigmoid(10 * (y / height) - 2)
                     if random.uniform(0, 1) > stone_chance:
                         column.append(Dirt(self, x, y, False))
                     else:
@@ -133,14 +134,18 @@ class World(object):
         distances = {}
         ratio_level = y / height
         for ratio_peak_list in resource_ratio_peaks:
-            distances[ratio_peak_list[0]] = RATIO_MAX - abs(ratio_peak_list[1] - ratio_level)
-        total_distances = 0
-        for distance in distances.values():
-            total_distances += distance
+            distances[ratio_peak_list[0]] = abs(ratio_peak_list[1] - ratio_level)
+        chances = {}
+        # Calculate individual chances and sum them
+        total_chances = 0
+        for i in range(0, len(resource_ratio_peaks)):
+            chance = self.pdf(0, resource_ratio_peaks[i][2], distances[resource_ratio_peaks[i][0]])
+            total_chances += chance
+            chances[resource_ratio_peaks[i][0]] = chance
         normalized_chances = {}
-        for distance in distances:
-            normalized_chance = distances[distance] / total_distances
-            normalized_chances[distance] = normalized_chance
+        for chance in chances:
+            normalized_chance = chances[chance] / total_chances
+            normalized_chances[chance] = normalized_chance
         population = []
         weights = []
         for normalized_chance in normalized_chances:
@@ -148,6 +153,12 @@ class World(object):
             weights.append(normalized_chances[normalized_chance])
         result = self.choice(population, weights)
         return result(self, x, y)
+
+    # Calculate PDF for normal distribution
+    def pdf(self, mean, sd, input):
+        product = 1 / (math.sqrt(2 * math.pi * sd))
+        pow = -((math.pow(input - mean, 2))/(2 * sd))
+        return product * math.pow(math.e, pow)
 
     def cdf(self, weights):
         """
