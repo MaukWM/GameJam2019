@@ -230,7 +230,7 @@ class Player(object):
     def jump(self):
         if self.can_jump:
             self.can_jump = False
-            self.y_speed -= 6.0
+            self.y_speed -= 5.0
 
     def find_selected_tile(self, mouse_x, mouse_y):
         """
@@ -275,32 +275,32 @@ class Player(object):
         x_tile, y_tile = tile.x * TILE_SIZE_IN_PIXELS, tile.y * TILE_SIZE_IN_PIXELS
         self.game.entities.append(DroppedItem(self.game, tile.item_type, x_tile, y_tile, meme_mode=self.game.memes_enabled))
 
-    #kan gebruikt worden als je een scrollwheel gebruikt
-    def increment_item_selected(self, bool):
-        if bool:
-            self.change_item_selected(self.selected_inventory_item + 1)
-        else:
-            self.change_item_selected(self.selected_inventory_item + 1)
+    # kan gebruikt worden als je een scrollwheel gebruikt
+    def increment_item_selected(self):
+        self.change_item_selected((self.selected_inventory_item + 1) % len(self.inventory.inventory.keys()))
+
+    def decrement_item_selected(self):
+        self.change_item_selected((self.selected_inventory_item - 1) % len(self.inventory.inventory.keys()))
 
     def change_item_selected(self, number):
         self.selected_inventory_item = number % DIFFERENT_ITEM_NUMBER
 
-    map_inventory_to_placeable = {0:True,
-                                 1:True,
-                                 2:True,
-                                 3:True,
-                                 4:True,
-                                 5:True,
-                                 6:True,
+    map_inventory_to_placeable = {0: True,
+                                 1: True,
+                                 2: True,
+                                 3: True,
+                                 4: True,
+                                 5: True,
+                                 6: True,
                                  }
 
-    map_inventory_to_consturcter = {0:lambda x,y,world : Dirt(world,x,y,False),
-                                    1:lambda x,y,world : Stone(world,x,y),
-                                    2:lambda x,y,world : Jeltisnium(world,x,y, False),
-                                    3:lambda x,y,world : Leninium(world,x,y, False),
-                                    4:lambda x,y,world : Marxinium(world,x,y, False),
-                                    5:lambda x,y,world : NokiaPhonium(world,x,y, False),
-                                    6:lambda x,y,world : HalfLiterKlokkium(world,x,y, False),
+    map_inventory_to_consturcter = {0: lambda x,y,world : Dirt(world,x,y,False),
+                                    1: lambda x,y,world : Stone(world,x,y),
+                                    2: lambda x,y,world : Jeltisnium(world,x,y, False),
+                                    3: lambda x,y,world : Leninium(world,x,y, False),
+                                    4: lambda x,y,world : Marxinium(world,x,y, False),
+                                    5: lambda x,y,world : NokiaPhonium(world,x,y, False),
+                                    6: lambda x,y,world : HalfLiterKlokkium(world,x,y, False),
                                   }
 
     def use_inventory_item(self):

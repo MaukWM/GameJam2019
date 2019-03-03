@@ -26,9 +26,9 @@ RESOURCE_CHANCE_CAP = 0.25
 resource_ratio_peaks = [None] * 5
 resource_ratio_peaks[0] = [Jeltisnium, 0.15]
 resource_ratio_peaks[1] = [Marxinium, 0.25]
-resource_ratio_peaks[2] = [Leninium, 0.35]
-resource_ratio_peaks[3] = [NokiaPhonium, 0.50]
-resource_ratio_peaks[4] = [HalfLiterKlokkium, 0.90]
+resource_ratio_peaks[2] = [Leninium, 0.50]
+resource_ratio_peaks[3] = [NokiaPhonium, 0.75]
+resource_ratio_peaks[4] = [HalfLiterKlokkium, 0.95]
 
 # to avoid magic numbers
 RATIO_MAX = 1
@@ -36,6 +36,7 @@ RATIO_MAX = 1
 
 class World(object):
     falling_tiles = []
+
     def __init__(self, width, height):
         """
         :param width: Width in tiles
@@ -45,7 +46,6 @@ class World(object):
         self.width = width
         self.height = height
         self.row_counter = height - 1
-
 
     def gen_world(self, width, height):
         """

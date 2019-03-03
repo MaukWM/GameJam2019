@@ -18,7 +18,7 @@ class Inventory(object):
     def init_inventory():
         inventory = {}
         for item_type in ItemType:
-            inventory[item_type] = InventoryItem(item_type, 0)
+            inventory[item_type] = InventoryItem(item_type, 20)
         return inventory
 
     def increment_item_amount(self, item_type: ItemType):
