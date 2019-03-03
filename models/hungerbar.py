@@ -17,7 +17,7 @@ class HungerBar:
         self.player = player
 
     def step(self):
-        self.hunger -= 0.05
+        self.hunger -= 0.1
         if self.hunger > 500:
             self.txt_surface = self.font.render("Hunger: " + str(int(self.hunger)), True, (0, 255, 0))
         elif self.hunger > 250:

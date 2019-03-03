@@ -48,9 +48,6 @@ class World(object):
         self.row_counter = height - 1
         self.growing_wheat = set()
 
-        from models.tiles.wheat_tile import Wheat
-        self.tile_matrix[10][19] = Wheat(self, 10, 19)
-
     def gen_world(self, width, height):
         """
         Generate the world with some beautiful generation code
