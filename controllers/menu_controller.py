@@ -51,6 +51,7 @@ class MenuController(object):
         self.title_font = pygame.font.SysFont("Arial", 60)
         if DEV_MODE:
             game_controller.GameController(self.window, self.meme_mode, self.rows_updated_per_frame, self.meteor_spawn_rate).run()
+
         self.setup()
 
     # Do all necessary setup
