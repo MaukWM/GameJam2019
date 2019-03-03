@@ -225,7 +225,7 @@ class Player(object):
         self.inventory.draw(surface, self.selected_inventory_item)
         self.draw_player(surface, camera_y)
         self.draw_pickaxe(surface, camera_y)
-        self.inventory.draw(surface)
+        self.inventory.draw(surface, self.selected_inventory_item)
         self.health_bar.draw(surface)
         if self.selected_tile is not None:
             rect = (
