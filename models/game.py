@@ -6,7 +6,6 @@ from models.explosion import Explosion
 import random
 import models.world
 import models.tiles.air_tile
-from models.items.dropped_item import DroppedItem
 from models.items.item_types import ItemType
 from models.items.item_types import SCORES, NAMES
 import pygame
@@ -18,7 +17,7 @@ class Game(object):
     POINTS_PER_DEPTH = 100
     SCORE_TO_BE_ADDED_INCREMENTS_MINIMUM = 4
 
-    def __init__(self, width, height, memes_enabled, rows_updated_per_frame, meteor_spawn_rate):
+    def __init__(self, width, height, memes_enabled, rows_updated_per_frame, meteor_spawn_rate, name):
         self.score: int = 0
         self.meteor_spawn_rate = meteor_spawn_rate
         self.meteor_damage_multiplier = 1
@@ -34,6 +33,7 @@ class Game(object):
         self.entities = []
         self.player = Player(self, 10, 300, memes_enabled)
         self.game_over = False
+        self.name = name
 
     def determine_score_factor(self, meteor_spawn_rate):
         self.difficulty_factor = (meteor_spawn_rate / 200)

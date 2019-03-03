@@ -44,13 +44,14 @@ class MenuController(object):
 
     def run_game(self):
         gc = game_controller.GameController(self.window, self.meme_mode, self.rows_updated_per_frame,
-                                            self.meteor_spawn_rate)
+                                            self.meteor_spawn_rate, self.name)
         gc.run()
-        death_controller.DeathController(gc.game.score, self.window).run()
+        death_controller.DeathController(gc.game.score, self.window, self.name).run()
 
-    def __init__(self):
+    def __init__(self, name):
         # setup stuff
         pygame.init()
+        self.name = name
         self.window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
         pygame.font.init()
         self.font = pygame.font.SysFont("Arial", 20)

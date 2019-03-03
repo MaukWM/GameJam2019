@@ -1,22 +1,29 @@
 import pygame
 import time
+from models.score_submission import submit_score
 
 class DeathController:
     MSG_1_X = 375
     MSG_1_Y = 300
 
-    def __init__(self, final_score, window):
+    def __init__(self, final_score, window, name):
         self.font = pygame.font.SysFont("Arial", 40)
         self.final_score = str(int(final_score))
         for char in self.final_score:
             self.MSG_1_X -= 10
         self.window = window
+        self.name = name
 
     def run(self):
         msg = self.font.render("You died! You scored " + self.final_score + " points.", False, (255, 255, 255))
         self.window.blit(msg, (self.MSG_1_X, self.MSG_1_Y))
         pygame.display.flip()
         time.sleep(1)
+
+        try:
+            submit_score(self.name, self.final_score)
+        except Exception:
+            pass
 
         pygame.event.clear()
         while True:
