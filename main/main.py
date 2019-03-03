@@ -1,16 +1,22 @@
 import pygame
-from tkinter.simpledialog import askstring
-import tkinter
+try:
+    from tkinter.simpledialog import askstring
+    import tkinter
+except Exception:
+    pass
 
 from controllers.menu_controller import MenuController
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 
 
 if __name__ == "__main__":
-
-    root = tkinter.Tk()
-    name = askstring("Name", "What's your name?")
-    root.withdraw()
+    name = ""
+    try:
+        root = tkinter.Tk()
+        name = askstring("Name", "What's your name?")
+        root.withdraw()
+    except Exception:
+        name = "I have no tkinter"
 
     pygame.init()
     window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
