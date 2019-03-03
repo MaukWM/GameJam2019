@@ -1,9 +1,12 @@
+from models.tiles.air_tile import Air
 from models.tiles.dirt_tile import Dirt
 from models.tiles.half_liter_klokkium_tile import HalfLiterKlokkium
 from models.tiles.tile import Tile
 from constants import TILE_SIZE_IN_PIXELS
 import pygame
 from models.items.item_types import ItemType
+
+AIR_UNDERGROUND_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/background.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
 
 WHEAT_SPRITES = [
     pygame.transform.scale(pygame.image.load('assets/graphics/wheat/wheat_0.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
@@ -61,12 +64,25 @@ class Wheat(Tile):
     def is_solid(self):
         return False
 
+    def can_support(self):
+        return False
+
     def draw(self, surface, camera_y):
         drawn_sprite = min(int(self.growth_level*len(WHEAT_SPRITES)), len(WHEAT_SPRITES)-1)
         x, y = self.x * TILE_SIZE_IN_PIXELS, self.y * TILE_SIZE_IN_PIXELS - camera_y
+        if self.y >= 20:
+            surface.blit(AIR_UNDERGROUND_SPRITE, (x, y))
         surface.blit(WHEAT_SPRITES[drawn_sprite], (x, y))
 
     def grow_step(self):
+        tile_above = self.world.get_tile_at_indices(self.x, self.y-1)
+        if tile_above is not None and tile_above.isfalling:
+            self.world.destroy_tile(self)
+
+        tile_below = self.world.get_tile_at_indices(self.x, self.y + 1)
+        if tile_below is not None and tile_below.isfalling or isinstance(tile_below, Air):
+            self.world.destroy_tile(self)
+
         self.growth_level += self.growing_speed
         self.growth_level = min(1.0, self.growth_level)
 
