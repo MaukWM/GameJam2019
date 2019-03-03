@@ -32,12 +32,27 @@ class GameController(object):
             self.game.player.jump()
 
         # TODO: REMOVE THESE HACKS
-        if event_key == pygame.K_LEFT:
+        elif event_key == pygame.K_LEFT:
             self.game.player.x_speed = -2
 
         # TODO: REMOVE THESE HACKS
-        if event_key == pygame.K_RIGHT:
+        elif event_key == pygame.K_RIGHT:
             self.game.player.x_speed = 2
+
+        elif event_key == pygame.K_1:
+            self.game.player.change_item_selected(0)
+        elif event_key == pygame.K_2:
+            self.game.player.change_item_selected(1)
+        elif event_key == pygame.K_3:
+            self.game.player.change_item_selected(2)
+        elif event_key == pygame.K_4:
+            self.game.player.change_item_selected(3)
+        elif event_key == pygame.K_5:
+            self.game.player.change_item_selected(4)
+        elif event_key == pygame.K_6:
+            self.game.player.change_item_selected(5)
+        elif event_key == pygame.K_7:
+            self.game.player.change_item_selected(6)
 
 
     # Handle all pygame events
@@ -103,4 +118,4 @@ class GameController(object):
 
         if button == 3:
             # RMB
-            pass
+            self.game.player.use_inventory_item()
