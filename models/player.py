@@ -293,10 +293,10 @@ class Player(object):
 
     # kan gebruikt worden als je een scrollwheel gebruikt
     def increment_item_selected(self):
-        self.change_item_selected((self.selected_inventory_item + 1) % len(self.inventory.inventory.keys()))
+        self.change_item_selected((self.selected_inventory_item + 1) % DIFFERENT_ITEM_NUMBER)
 
     def decrement_item_selected(self):
-        self.change_item_selected((self.selected_inventory_item - 1) % len(self.inventory.inventory.keys()))
+        self.change_item_selected((self.selected_inventory_item - 1) % DIFFERENT_ITEM_NUMBER)
 
     def change_item_selected(self, number):
         self.selected_inventory_item = number % DIFFERENT_ITEM_NUMBER
