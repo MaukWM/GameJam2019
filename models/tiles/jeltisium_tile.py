@@ -6,7 +6,8 @@ from models.items.item_types import ItemType
 JELTISIUM_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/jeltsinium.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
 STONE_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/stone.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
 JELTISIUM_BLOCK_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/jeltsinium_block.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
-JELTISIUM_BEAM_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/jeltsinium_beam.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
+JELTISIUM_BEAM_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/support_beams/jeltsinium_block.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
+AIR_UNDERGROUND_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/background.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
 
 
 class Jeltisnium(Tile):
@@ -35,4 +36,6 @@ class Jeltisnium(Tile):
             if self.solid:
                 surface.blit(JELTISIUM_BLOCK_SPRITE, (x, y))
             else:
+                if self.y >= 20:
+                    surface.blit(AIR_UNDERGROUND_SPRITE, (x, y))
                 surface.blit(JELTISIUM_BEAM_SPRITE, (x, y))

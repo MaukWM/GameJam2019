@@ -5,7 +5,8 @@ from models.tiles.tile import Tile
 from models.items.item_types import ItemType
 
 STONE_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/stone.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
-STONE_BEAM_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/stone_beam.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
+STONE_BEAM_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/support_beams/stone.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
+AIR_UNDERGROUND_SPRITE = pygame.transform.scale(pygame.image.load('assets/graphics/background.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS))
 
 
 class Stone(Tile):
@@ -29,4 +30,6 @@ class Stone(Tile):
         if self.solid:
             surface.blit(STONE_SPRITE, (x, y))
         else:
+            if self.y >= 20:
+                surface.blit(AIR_UNDERGROUND_SPRITE, (x, y))
             surface.blit(STONE_BEAM_SPRITE, (x, y))
