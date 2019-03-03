@@ -45,9 +45,9 @@ PLAYER_LEGS_WALKING_FRAMES = [
 
 PICKAXE = pygame.image.load('assets/graphics/pickaxe.png')
 
-PLAYER_DAMAGE = 0.05
-
 DIFFERENT_ITEM_NUMBER = 8
+FALL_DAMAGE_THRESHOLD = 15
+FALL_DAMAGE_SCALING_FACTOR = 2.5
 
 
 class Player(object):
@@ -64,13 +64,14 @@ class Player(object):
         self.pickaxe_sprite = PICKAXE
         self.is_mining = False
         self.highest_reached_y = DIRT_START - 2  # -2 because then it works properly
-        self.can_jump = True
+        self.can_jump = False
         self.selected_tile = None
         self.inventory = Inventory(memes_enabled)
         self.health_bar = HealthBar()
         self.selected_inventory_item = 0
         self.pickaxe = Pickaxe(self)
         self.font = pygame.font.SysFont("Arial", 30, True)
+        self.shifts = False
         self.hunger_bar = HungerBar(self)
 
     def step(self):
@@ -118,9 +119,13 @@ class Player(object):
             # Compute the tile index of the tile containing the bottom side of the player
             y_tile_bottom = ((new_y + PLAYER_HEIGHT) // TILE_SIZE_IN_PIXELS) * TILE_SIZE_IN_PIXELS
             if not can_move_down:
+                # Fall damage
+                if self.y_speed > FALL_DAMAGE_THRESHOLD:
+                    self.health_bar.take_damage(math.pow(self.y_speed - FALL_DAMAGE_THRESHOLD, FALL_DAMAGE_SCALING_FACTOR))
                 # Reset jump
                 self.can_jump = True
                 new_y = y_tile_bottom - PLAYER_HEIGHT
+                # Bounce back
                 if self.y_speed < 1:
                     self.y_speed = 0
                 else:
@@ -381,15 +386,15 @@ class Player(object):
                                   7: True,
                                   }
 
-    map_inventory_to_consturcter = {0: lambda x, y, world: Dirt(world, x, y, False),
-                                    1: lambda x, y, world: Stone(world, x, y),
-                                    2: lambda x, y, world: Jeltisnium(world, x, y, False),
-                                    3: lambda x, y, world: Leninium(world, x, y, False),
-                                    4: lambda x, y, world: Marxinium(world, x, y, False),
-                                    5: lambda x, y, world: NokiaPhonium(world, x, y, False),
-                                    6: lambda x, y, world: HalfLiterKlokkium(world, x, y, False),
+    map_inventory_to_consturcter = {0:lambda x,y,world,solid : Dirt(world,x,y,False, solid),
+                                    1:lambda x,y,world,solid : Stone(world,x,y, solid),
+                                    2:lambda x,y,world,solid : Jeltisnium(world,x,y, False, solid),
+                                    3:lambda x,y,world,solid : Leninium(world,x,y, False, solid),
+                                    4:lambda x,y,world,solid : Marxinium(world,x,y, False, solid),
+                                    5:lambda x,y,world,solid : NokiaPhonium(world,x,y, False, solid),
+                                    6:lambda x,y,world,solid : HalfLiterKlokkium(world,x,y, False, solid),
                                     7: lambda x, y, world: Wheat(world, x, y),
-                                    }
+                                  }
 
     def use_inventory_item(self):
         if self.map_inventory_to_placeable[self.selected_inventory_item]:
@@ -398,7 +403,7 @@ class Player(object):
                     self.inventory.inventory[ItemType(self.selected_inventory_item + 1)].amount -= 1
                     x = self.selected_tile.x
                     y = self.selected_tile.y
-                    block = self.map_inventory_to_consturcter[self.selected_inventory_item](x, y, self.world)
+                    block = self.map_inventory_to_consturcter[self.selected_inventory_item](x, y, self.world, not self.shifts)
                     if block is not None:
                         self.world.tile_matrix[x][y] = block
 
