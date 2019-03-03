@@ -429,7 +429,7 @@ class Player(object):
                                     4:lambda x,y,world,solid : Marxinium(world,x,y, False, solid),
                                     5:lambda x,y,world,solid : NokiaPhonium(world,x,y, False, solid),
                                     6:lambda x,y,world,solid : HalfLiterKlokkium(world,x,y, False, solid),
-                                    7: lambda x, y, world: Wheat(world, x, y),
+                                    7: lambda x, y, world, solid: Wheat(world, x, y),
                                   }
 
     def use_inventory_item(self):

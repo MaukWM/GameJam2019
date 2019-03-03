@@ -50,9 +50,6 @@ class World(object):
         self.growing_wheat = set()
         self.rows_updated_per_frame = rows_updated_per_frame
 
-        from models.tiles.wheat_tile import Wheat
-        self.tile_matrix[10][19] = Wheat(self, 10, 19)
-
     def gen_world(self, width, height):
         """
         Generate the world with some beautiful generation code

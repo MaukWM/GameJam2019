@@ -6,13 +6,13 @@ import pygame
 from models.items.item_types import ItemType
 
 WHEAT_SPRITES = [
-    pygame.transform.scale(pygame.image.load('assets/graphics/wheat_0.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
-    pygame.transform.scale(pygame.image.load('assets/graphics/wheat_1.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
-    pygame.transform.scale(pygame.image.load('assets/graphics/wheat_2.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
-    pygame.transform.scale(pygame.image.load('assets/graphics/wheat_3.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
-    pygame.transform.scale(pygame.image.load('assets/graphics/wheat_4.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
-    pygame.transform.scale(pygame.image.load('assets/graphics/wheat_5.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
-    pygame.transform.scale(pygame.image.load('assets/graphics/wheat_6.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
+    pygame.transform.scale(pygame.image.load('assets/graphics/wheat/wheat_0.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
+    pygame.transform.scale(pygame.image.load('assets/graphics/wheat/wheat_1.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
+    pygame.transform.scale(pygame.image.load('assets/graphics/wheat/wheat_2.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
+    pygame.transform.scale(pygame.image.load('assets/graphics/wheat/wheat_3.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
+    pygame.transform.scale(pygame.image.load('assets/graphics/wheat/wheat_4.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
+    pygame.transform.scale(pygame.image.load('assets/graphics/wheat/wheat_5.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
+    pygame.transform.scale(pygame.image.load('assets/graphics/wheat/wheat_6.png'), (TILE_SIZE_IN_PIXELS, TILE_SIZE_IN_PIXELS)),
 
 ]
 
@@ -34,7 +34,7 @@ class Wheat(Tile):
         }
 
         self.ready = False
-
+        self.wrong_ground_type = False
         # Goes to 1 over the course of growing
         self.growth_level = 0
 
@@ -44,9 +44,16 @@ class Wheat(Tile):
         if isinstance(tile_below, Dirt):
             self.growing_speed *= 0.001
         elif isinstance(tile_below, HalfLiterKlokkium):
+            self.growing_speed *= 0.1
+        else:
+            self.growing_speed = 0
+            self.wrong_ground_type = True
+
+        depth = self.y - 20
+        if depth > 100:
             self.growing_speed *= 0.01
         else:
-            self.damage(1000000000)
+            self.growing_speed *= (1-(depth / 100)) * (1 - 0.01) + 0.01
 
     def get_strength(self):
         return 0.0
@@ -62,6 +69,9 @@ class Wheat(Tile):
     def grow_step(self):
         self.growth_level += self.growing_speed
         self.growth_level = min(1.0, self.growth_level)
+
+        if self.wrong_ground_type:
+            self.world.destroy_tile(self)
 
         # If the wheat is ready: change the drop type
         if not self.ready and self.growth_level * len(WHEAT_SPRITES) > len(WHEAT_SPRITES) - 1:

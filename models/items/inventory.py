@@ -19,6 +19,7 @@ class Inventory(object):
         inventory = {}
         for item_type in ItemType:
             inventory[item_type] = InventoryItem(item_type, 0)
+        inventory[ItemType.SEEDS].amount += 1
         return inventory
 
     def increment_item_amount(self, item_type: ItemType):

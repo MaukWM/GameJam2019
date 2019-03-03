@@ -15,11 +15,18 @@ class HungerBar:
         self.txt_2 = self.font_small.render("You're getting hungry, press 'E' to eat 1 wheat.", True, (255, 255, 255))
         self.txt_3 = self.font_small.render("You're getting hungry, try to find something to eat", True, (255, 255, 255))
         self.player = player
+        self.heal_step = 0
 
     def step(self):
-        self.hunger -= 0.05
+        self.heal_step += 1
+        if self.heal_step == 100:
+            self.heal_step = 0
+
+        self.hunger -= 0.1
         if self.hunger > 500:
             self.txt_surface = self.font.render("Hunger: " + str(int(self.hunger)), True, (0, 255, 0))
+            if self.heal_step == 0:
+                self.player.health_bar.take_damage(-1)
         elif self.hunger > 250:
             self.txt_surface = self.font.render("Hunger: " + str(int(self.hunger)), True, (255, 255, 102))
         else:

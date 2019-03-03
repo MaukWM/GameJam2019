@@ -15,12 +15,14 @@ class HealthBar:
 
     def take_damage(self, amount):
         self.health -= math.floor(amount)
+        self.health = min(self.health, 1000)
         if self.health > 500:
             self.txt_surface = self.font.render("Health: " + str(self.health), True, (0, 255, 0))
         elif self.health > 250:
             self.txt_surface = self.font.render("Health: " + str(self.health), True, (255, 255, 102))
         else:
             self.txt_surface = self.font.render("Health: " + str(self.health), True, (255, 0, 0))
+
 
     def draw(self, surface):
         surface.blit(self.txt_surface, (10, 620))
