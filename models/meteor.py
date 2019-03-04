@@ -1,4 +1,4 @@
-from constants import FRAME_RATE
+from constants import FRAME_RATE, SCREEN_HEIGHT
 import math
 import pygame
 import models.tiles.air_tile
@@ -47,6 +47,11 @@ class Meteor(object):
 
     # draw this meteor at the position in the next frame
     def draw(self, surface, camera_y):
+        min_y = camera_y - self.height
+        max_y = (camera_y + SCREEN_HEIGHT) + self.height
+        if not min_y < self.y < max_y:
+            return
+
         to_draw_y = self.y - camera_y
         to_draw_x= self.x
         surface.blit(self.SPRITE, (to_draw_x, to_draw_y))
@@ -66,7 +71,7 @@ class Meteor(object):
                     if type(game_tiles[grid_x][grid_y]) != models.tiles.air_tile.Air:
                         collide = True
         '''
-        if grid_y >= 0 and grid_y < height and grid_x >= 0 and grid_x < width:
+        if grid_y >= self.world.get_highest_block() and grid_y < height and grid_x >= 0 and grid_x < width:
             #if type(game_tiles[grid_x][grid_y]) != models.tiles.air_tile.Air:
             if game_tiles[grid_x][grid_y].is_solid():
                 range_size = int(math.ceil(self.size))

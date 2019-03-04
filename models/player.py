@@ -441,7 +441,7 @@ class Player(object):
                     y = self.selected_tile.y
                     block = self.map_inventory_to_consturcter[self.selected_inventory_item](x, y, self.world, not self.shifts)
                     if block is not None:
-                        self.world.tile_matrix[x][y] = block
+                        self.world.set_tile_at_indices(x, y, block)
 
     def eat(self):
         if self.inventory.inventory[ItemType.WHEAT].amount > 0:

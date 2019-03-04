@@ -49,6 +49,7 @@ class World(object):
         self.row_counter = height - 1
         self.growing_wheat = set()
         self.rows_updated_per_frame = rows_updated_per_frame
+        self.highest_block = 0
 
     def gen_world(self, width, height):
         """
@@ -113,6 +114,8 @@ class World(object):
             return None
 
     def set_tile_at_indices(self, tile_x, tile_y, tile):
+        if tile_y < self.highest_block and not isinstance(tile, Air):
+            self.highest_block = tile_y
         self.tile_matrix[int(tile_x)][int(tile_y)] = tile
 
     def get_tile_at(self, x, y):
@@ -270,6 +273,7 @@ class World(object):
     def step(self):
         self.wheat_step()
         self.update_should_fall()
+        self.update_highest_block()
         i = 0
         while i < len(self.falling_tiles):
             tile = self.falling_tiles[i]
@@ -277,6 +281,28 @@ class World(object):
                 self.falling_tiles.remove(tile)
             else:
                 i += 1
+
+    def update_highest_block(self):
+        found_highest_block = False
+        tile_y = self.highest_block
+        while not found_highest_block:
+            for tile_x in range(self.width):
+                tile = self.get_tile_at_indices(tile_x, tile_y)
+                if tile is None:
+                    # World bottom
+                    found_highest_block = True
+                    self.highest_block = tile_y
+                    break
+                elif not isinstance(tile, Air):
+                    found_highest_block = True
+                    self.highest_block = tile_y
+                    break
+            tile_y += 1
+        print(self.highest_block)
+
+    def get_highest_block(self):
+        return self.highest_block
+
 
     def wheat_step(self):
         to_remove = set()

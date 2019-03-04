@@ -2,6 +2,8 @@ import pygame
 import sys
 import random
 
+from constants import SCREEN_HEIGHT
+
 
 class Explosion:
 
@@ -17,6 +19,10 @@ class Explosion:
         self.frame_counter += 1
 
     def draw(self, surface, camera_y):
+        min_y = camera_y - 108
+        max_y = (camera_y + SCREEN_HEIGHT) + 108
+        if not min_y < self.y < max_y:
+            return
         try:
             to_draw_y = self.y - camera_y - (self.impact_radius // 2)
             to_draw_x = self.x - (self.impact_radius // 2)
