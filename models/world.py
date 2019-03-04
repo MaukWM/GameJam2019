@@ -298,7 +298,6 @@ class World(object):
                     self.highest_block = tile_y
                     break
             tile_y += 1
-        print(self.highest_block)
 
     def get_highest_block(self):
         return self.highest_block
