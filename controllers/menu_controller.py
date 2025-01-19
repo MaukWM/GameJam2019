@@ -202,7 +202,7 @@ class MenuController(object):
 
     def run(self):
         while True:
-            start_time = time.clock()
+            start_time = time.time()
 
             # handle pygame events from the queue
             self.handle_events()
@@ -210,7 +210,7 @@ class MenuController(object):
             self.update_state()
 
             # possibly delay program execution to ensure steady frame rate
-            running_time = time.clock() - start_time
+            running_time = time.time() - start_time
             if running_time < 1/FRAME_RATE:
                 time.sleep((1/FRAME_RATE) - running_time)
 
