@@ -7,9 +7,9 @@ def submit_score(name, score):
     sha256.update((name + str(score) + "manySecureMuchSafeSalt").encode())
     hash = sha256.hexdigest()
     resp = urllib.request.urlopen(
-        "http://lekkereframbozen.student.utwente.nl/submit_2019.php?name=%s&score=%d&hash=%s" % (name, int(score), hash)
+        "http://gerben-meijer.nl/submit_2019.php?name=%s&score=%d&hash=%s" % (name, int(score), hash)
     ).read()
-    print("http://lekkereframbozen.student.utwente.nl/submit_2019.php?name=%s&score=%d&hash=%s" % (name, int(score), hash))
+    print("http://gerben-meijer.nl/submit_2019.php?name=%s&score=%d&hash=%s" % (name, int(score), hash))
     if resp != b'400 OK':
         print("Error submitting scores: %s"%resp)
     else:
